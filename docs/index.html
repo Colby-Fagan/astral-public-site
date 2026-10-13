@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#090e10"><meta name="robots" content="index, follow"><link rel="canonical" href="https://astral.detection.bio/"><meta name="description" content="ASTRAL: Biological misuse detection for AI chat logs. Contact ASTRAL@detection.bio."><title>ASTRAL — Biological misuse detection for AI chat logs</title><meta property="og:type" content="website"><meta property="og:site_name" content="ASTRAL"><meta property="og:title" content="ASTRAL — Biological misuse detection for AI chat logs"><meta property="og:description" content="Biological misuse detection for AI chat logs."><meta property="og:url" content="https://astral.detection.bio/"><meta property="og:image" content="https://astral.detection.bio/assets/social-preview.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Biological misuse detection for AI chat logs, over a field of dots"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://astral.detection.bio/assets/social-preview.png"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="overview.css?v=26"><script src="atmosphere.js?v=13" defer></script></head>
+<body><canvas id="data-atmosphere" aria-hidden="true"></canvas><div class="site-foreground"><a class="skip-link" href="#overview">Skip to content</a>
+<header class="site-header"><a href="#overview" aria-label="ASTRAL overview"><img src="assets/astral-lockup-dark.svg" width="172" height="35" alt="ASTRAL"><span class="brand-expansion">Activity Scanner Tool for Risk Assessment of Logs</span></a><nav aria-label="Main navigation"><a href="#contact">Collaborate</a><a href="#team">Team</a><a href="ASTRAL-project-overview.pdf?v=a82371645cff" download>Download PDF</a></nav></header>
+<main><section class="landing-intro" aria-labelledby="document-title"><header class="project-heading"><h1 id="document-title" aria-label="Biological misuse detection for AI chat logs"><em>Biological misuse</em><br>detection for<br>AI chat logs</h1><p class="affiliation" data-source="1"><em>Cambridge Boston Alignment Initiative (CBAI) AI×Biosecurity Fellowship</em></p></header>
+<section class="headline"><p data-source="3"><strong>ASTRAL scans an organization&#x27;s own AI transcripts for biological misuse, returning a risk score and threat characterization that helps any team, experts and nonexperts alike, cut through log volume and check what may be a real threat.</strong></p></section></section>
+<article id="overview" class="document" aria-labelledby="document-title">
+<figure class="system-overview approved-overview" aria-labelledby="visual-overview-title">
+  <figcaption><h2 id="visual-overview-title">Visual overview</h2><a href="assets/astral-approved-workflow.svg" target="_blank" rel="noopener">View full-size diagram</a></figcaption>
+  <picture><source media="(max-width: 1100px)" srcset="assets/astral-approved-workflow-mobile.svg"><img src="assets/astral-approved-workflow.svg" width="1834" height="604" alt="The variable table defines misuse scenarios and generates synthetic transcripts. At deployment, real transcripts held by deployer of ASTRAL replace synthetic input. The multistage scanner selects concerning logs and characterizes each case using the variable table. Each triaged case receives a report containing its risk score, evidence and rationale, which sets priority for human review."></picture>
+</figure>
+<section class="document-section"><h2 data-source="4"><span class="section-number">01</span> The gap</h2>
+<p data-source="5">A frontier provider&#x27;s safeguards are bound to its own model and API. They do not follow when a motivated actor moves to an open-weight model and runs it on third-party inference that does little or no monitoring [1]. Today, providers handle biological-misuse risk mostly through inline classifiers that screen individual responses [2]; session-level review of who is doing what across a conversation happens selectively, often only during active investigations [3]. Non-frontier providers have limited or no standardized equivalent, and experts specifically warn that these surfaces will &quot;not attract the attention of AI companies&quot; [1]. The organizations holding those logs (inference providers, AI-scientist platforms, enterprise deployers) rarely have a dedicated biosecurity function.</p>
+<p data-source="6">AI bio-capabilities are advancing. AI already outperforms expert virologists on wet-lab troubleshooting in test settings [5], and leading open-weight models trail closed frontier models by about eight months in biological capabilities [6]. <strong>If this trend continues, today&#x27;s frontier biological capabilities could reach unmonitored platforms in less than a year.</strong> The safeguards that exist are mostly pre-deployment and first-party, built inside frontier companies for their own models. <strong>ASTRAL is the post-deployment complement.</strong></p>
+</section>
+<section class="document-section"><h2 data-source="7"><span class="section-number">02</span> What it is</h2>
+<p data-source="8">ASTRAL reads multi-turn conversations, because intent accumulates across turns (persistence past refusals, session-hopping, incremental progress) and rarely sits in one flaggable message. It distills each flagged conversation into a structured threat report for a human reviewer: apparent actor and goal, the threat pathway implicated, and a review priority. It runs always-on against incoming logs or retrospectively over historical ones, and it is built on Inspect Scout [9]. </p>
+</section>
+<section class="document-section"><h2 data-source="9"><span class="section-number">03</span> How it works</h2>
+<p data-source="10">Three pieces, built with input from biosecurity expert affiliates of organizations like SecureBio, OpenAI, and MIT. </p><ol class="components"><li data-source="11"><strong>Variable table: </strong>the ground truth. It breaks an AI bio-misuse scenario into nine variables across four categories (the actor, the action, the agent, the target), drawing on the threat-modeling literature and SecureBio&#x27;s BioTIER content sets [10]. The same table defines both the scenarios we generate and the rubric the scanner scores against, so input and output can be compared directly and the scanner improved on the difference.</li>
+<li data-source="12"><strong>Synthetic transcript pipeline</strong>: built on Inspect AI, the pipeline has one model role-play a benign or malicious actor against an assistant model, producing transcripts that range from routine biology questions to deliberate misuse attempts. Models, scenarios, and actor profiles swap independently. </li>
+<li data-source="13"><strong>Multilayer scanner:</strong> keeps cost down. A keyword filter and an embedding filter discard the majority of logs cheaply. Only the small remainder reaches the LLM scanner, which classifies each transcript against the variable table and writes the threat report. </li>
+</ol></section>
+<section class="document-section"><h2 data-source="14"><span class="section-number">04</span> Why it&#x27;s different, and who runs it</h2>
+<p data-source="15">Frontier labs already run automated multi-turn scanning. A bio-specific, non-provider version of that capability does not yet exist. Because ASTRAL is defined by the log it reads rather than the provider it sits on, each log-holder runs it in their own secure environment and adapts it to their own data. The log-holders are the deployers: AI-scientist platforms, third-party inference providers, and life-science enterprises. So far we have developed and evaluated on synthetic transcripts. We are now seeking a log-holding collaborator. We will adapt ASTRAL to their platform and work with their team to strengthen bio-misuse detection, and in return ASTRAL gets validated and refined in a real deployment.</p>
+</section>
+      <section class="contact wrap" id="contact" aria-labelledby="contact-title">
+        <h2 id="contact-title">Seeking a real-world<br>validation partner</h2>
+        <p>We’re seeking a log-holding collaborator to validate ASTRAL in a real deployment. We’ll adapt ASTRAL to your platform and work with your team to strengthen bio-misuse detection.</p>
+        <p class="contact-note">Interested in collaborating, or want to learn more? Get in touch.</p>
+        <a class="email-link" href="mailto:ASTRAL@detection.bio"><svg class="email-icon" viewBox="0 0 24 18" aria-hidden="true" focusable="false"><rect x="1" y="1" width="22" height="16" rx="2"/><path d="m2 3 10 7 10-7"/></svg>ASTRAL@detection.bio</a>
+        <a class="download-link" href="ASTRAL-project-overview.pdf?v=a82371645cff" download>Download the one-page project overview (PDF) <span aria-hidden="true">↓</span></a>
+      </section>
+
+</article>
+
+
+    <section class="team wrap section" id="team" aria-labelledby="team-title">
+      <h2 id="team-title">The people behind ASTRAL.</h2>
+      <h3 class="team-group-title" id="current-members-title">Current members</h3>
+      <ul class="team-members" aria-labelledby="current-members-title">
+        <li class="member-card member-card--multi"><div class="member-link"><a class="member-card-target" href="https://colbyfagan.com" aria-label="Colby Fagan personal website"></a><img src="assets/team/colby-fagan.jpg" alt="" width="640" height="640" loading="lazy" decoding="async"><div class="member-info"><h4>Colby Fagan</h4><div class="profile-links"><a class="profile-link" href="https://colbyfagan.com">Personal website</a><a class="profile-link" href="https://www.linkedin.com/in/colby-fagan/">LinkedIn</a></div></div></div></li>
+        <li><a class="member-link" href="https://www.linkedin.com/in/shubhu-dharmadhikari/" aria-label="Shubhu Dharmadhikari on LinkedIn"><img src="assets/team/shubhu-dharmadhikari.jpg" alt="" width="640" height="640" loading="lazy" decoding="async"><div class="member-info"><h4>Shubhu Dharmadhikari</h4><span class="profile-link">LinkedIn</span></div></a></li>
+        <li><a class="member-link" href="https://www.linkedin.com/in/ethantam5133/" aria-label="Ethan Tam on LinkedIn"><img src="assets/team/ethan-tam.jpg" alt="" width="128" height="128" loading="lazy" decoding="async"><div class="member-info"><h4>Ethan Tam</h4><span class="profile-link">LinkedIn</span></div></a></li>
+      </ul>
+      <h3 class="team-group-title" id="previous-contributors-title">Previous contributors</h3>
+      <ul class="team-members" aria-labelledby="previous-contributors-title">
+        <li><div class="member-link"><img src="assets/team/jason-tang.jpg" alt="" width="400" height="400" loading="lazy" decoding="async"><div class="member-info"><h4>Jason Tang</h4></div></div></li>
+      </ul>
+    </section>
+
+    <aside class="support wrap" aria-label="Project support">
+      <p>Supported by</p>
+      <a href="https://www.cbai.ai/">Cambridge Boston<br>Alignment Initiative</a>
+      <a href="https://coefficientgiving.org/">Coefficient Giving</a>
+    </aside>
+
+<section id="sources" class="sources"><h2 data-source="16">Sources</h2><ol>
+<li data-source="17">Williams, Righetti, Rosenberg, … Tetlock, &quot;Forecasting LLM-Enabled Biorisk and the Efficacy of Safeguards,&quot; FRI / SecureBio / GovAI (2025, rev. Apr 2026).</li>
+<li data-source="18">Anthropic, &quot;Constitutional Classifiers&quot; (arXiv:2501.18837, 2025); OpenAI, GPT-5 System Card (2025).</li>
+<li data-source="19">Anthropic, &quot;Detecting and Countering Misuse of AI&quot; (Aug 2025).</li>
+<li data-source="20">Feldman, Feldman &amp; Antón, &quot;Know Your Scientist: KYC as Biosecurity Infrastructure,&quot; arXiv:2602.06172 (Feb 2026).</li>
+<li data-source="21">Götting et al., &quot;Virology Capabilities Test (VCT),&quot; arXiv:2504.16137 (2025).</li>
+<li data-source="22">Shiv Muthupandiyan, &quot;<a href="https://securebio.org/blog/kimi-k3-biology-capabilities-assessment/">Kimi K3 Biology Capabilities Assessment</a>,&quot; SecureBio (August 7, 2026).</li>
+<li data-source="23">Hassabis, Altman, Amodei, Wang, Suleyman et al., open letter to Congress on nucleic acid synthesis screening, screendna.org (June 2026).</li>
+<li data-source="24">VET Artificial Intelligence Act, S.2615; AI Risk Evaluation Act, S.2938, 119th Congress.</li>
+<li data-source="25">Meridian Labs, &quot;Inspect Scout,&quot; github.com/meridianlabs-ai/inspect_scout.</li>
+<li data-source="26">Marshall et al., &quot;BioTIER: A Refusal Benchmark for Targeted Biological Risk Mitigation,&quot; arXiv:2607.14479 (2026).</li>
+<li data-source="27">Agrawal et al., &quot;GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning,&quot; ICLR 2026, arXiv:2507.19457.</li>
+<li data-source="28">Anthropic, &quot;LLM ATT&amp;CK Navigator&quot; (introducing the ARiES actor-risk score), red.anthropic.com (June 2026).</li>
+</ol></section>
+</main><footer><a class="footer-wordmark" href="#overview" aria-label="ASTRAL home"><img src="assets/astral-lockup-dark.svg" width="142" height="29" alt="ASTRAL"><span class="brand-expansion">Activity Scanner Tool for Risk Assessment of Logs</span></a><a href="#overview">Back to top ↑</a></footer></div></body></html>
