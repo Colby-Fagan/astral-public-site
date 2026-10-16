@@ -1,4 +1,4 @@
-/* ASTRAL scroll visual: ASTRAL constellation -> double helix -> transcripts -> flagged -> priority list.
+/* ASTRAL scroll visual: nebula forming the ASTRAL mark -> double helix -> transcripts -> flagged -> priority list.
    Decorative and synthetic: no data, no network requests.
    One 3D particle field seen through a perspective camera. Each stage gives every particle a place;
    moving between stages sends particles along curved paths while the camera glides to a new view. */
@@ -35,7 +35,7 @@
   const SPRITE_K = [1 / .17, 1 / .36]; // half-size of the drawn sprite per unit of dot radius
 
   const STAGES = [
-    { name: 'Constellation', cam: { yaw: -.2, pitch: .08, dist: 4.75, roll: 0, tx: .02, ty: .02, tz: 0 }, arc: .5, tr: 1.7, spread: 1 },
+    { name: 'Nebula', cam: { yaw: -.2, pitch: .08, dist: 4.75, roll: 0, tx: .02, ty: .02, tz: 0 }, arc: .5, tr: 1.7, spread: 1 },
     { name: 'Helix', cam: { yaw: .64, pitch: .1, dist: 4.55, roll: -.4, tx: -.42, ty: .06, tz: 0 }, arc: .45, tr: 1.7, spread: 1 },
     { name: 'Transcripts', cam: { yaw: -.36, pitch: .06, dist: 4.4, roll: 0, tx: .16, ty: 0, tz: .32 }, arc: .5, tr: 1.6, spread: .6 },
     { name: 'Flagged', cam: { yaw: -.3, pitch: .05, dist: 4.2, roll: 0, tx: .16, ty: 0, tz: .32 }, arc: .12, tr: .55 },
@@ -80,75 +80,85 @@
       idx.forEach((slot, rank) => (L.map[rank] = slot));
     }
 
-    // Constellation: the ASTRAL mark drawn as stars. Thirteen bright stars sit where the logo's dots are, dotted
-    // lines join them (the apex first, down both sides together, then the crossbar from both ends), and a deep
-    // field of faint stars and haze surrounds them. Once drawn, a pulse of light runs along the lines now and then.
-    const MARK = [[32, 6], [27, 16], [37, 16], [22, 26], [42, 26], [17, 36], [27, 36], [37, 36], [47, 36], [12, 46], [52, 46], [7, 56], [57, 56]];
-    const MARK_R = 1.2, SEG = .3, DRAWN = 5 * SEG, PULSE = 6.5;
-    // [from, to, start, duration] in seconds from the start of the drawing; point 13 is the middle of the crossbar.
-    const STROKES = [];
-    [[0, 1, 3, 5, 9, 11], [0, 2, 4, 8, 10, 12]].forEach(side => { for (let k = 0; k < 5; k++) STROKES.push([side[k], side[k + 1], k * SEG, SEG]); });
-    STROKES.push([5, 6, 3 * SEG, SEG], [8, 7, 3 * SEG, SEG], [6, 13, 4 * SEG, SEG * .6], [7, 13, 4 * SEG, SEG * .6]);
-    let C0 = .3, lineFade = 0;              // when the drawing starts (seconds into the stage); overlay line strength
-    const starT = new Float32Array(13);     // when each star lights, from the start of the drawing
-    function buildMark() {
-      const r = rng(7), g = gaussian(r), L = slots(N, ['q', 'kind', 'star', 'ph', 'tw']);
-      const pts = MARK.map(([x, y], j) => [(x - 32) / 26 * MARK_R + g() * .018, (31 - y) / 26 * MARK_R + g() * .018, j ? g() * .12 : .22]);
-      pts.push(pts[6].map((v, k) => (v + pts[7][k]) / 2));
-      starT.fill(99); starT[0] = -.15;
-      STROKES.forEach(([a, b, t0, d]) => { starT[a] = Math.min(starT[a], t0); if (b < 13) starT[b] = Math.min(starT[b], t0 + d); });
-      const centre = [];
+    // Nebula: a soft cloud of blue, violet and teal gas with a few young stars. As the page opens, part of the gas
+    // gathers along the strokes of the ASTRAL mark, so a faint "A" forms inside the cloud, its apex an ice-blue star.
+    const MARK_R = 1.2, FORM0 = .35, FORM_T = 2.6;
+    const A_STROKES = [[32, 6, 7, 56], [32, 6, 57, 56], [17, 36, 47, 36]]; // logo units: both sides, then the crossbar
+    const toWorld = (x, y) => [(x - 32) / 26 * MARK_R, (31 - y) / 26 * MARK_R];
+    const APEX = toWorld(32, 6);
+    let C0 = .3, glowFade = 0;            // when the forming starts (seconds into the stage); apex glow strength
+    function formAt() { return reduce.matches ? 1 : ease(clamp((st - C0 - FORM0) / FORM_T)); }
+    function buildNebula() {
+      const r = rng(7), g = gaussian(r), L = slots(N, ['hx', 'hy', 'hz', 'w', 'ph', 'kind']);
       let n = 0;
-      const put = (x, y, z, col, sty, size, a, kind, q, star) => {
-        L.x[n] = x; L.y[n] = y; L.z[n] = z; L.col[n] = col; L.sty[n] = sty; L.size[n] = size; L.a[n] = a;
-        L.kind[n] = kind; L.q[n] = q; L.star[n] = star; L.ph[n] = r() * TAU; L.tw[n] = .3 + r() * 1.4;
+      // (x, y, z) is where a particle settles; (hx, hy, hz) is where it waits in the cloud before the mark forms
+      const put = (x, y, z, hx, hy, hz, col, size, a, kind) => {
+        L.x[n] = x; L.y[n] = y; L.z[n] = z; L.hx[n] = hx; L.hy[n] = hy; L.hz[n] = hz;
+        L.col[n] = col; L.sty[n] = 0; L.size[n] = size; L.a[n] = a; L.kind[n] = kind;
+        L.ph[n] = r() * TAU; L.w[n] = (.4 + r() * .8) * (r() < .5 ? -1 : 1);
         L.key[n] = clamp((x + 3.4) / 6.8 + g() * .01); n++;
       };
-      // stars: a hot core with a soft halo; the first particle of each sits exactly on the star
-      pts.slice(0, 13).forEach(([x, y, z], j) => {
-        const apex = j === 0, core = mobile ? 12 : 20, halo = mobile ? 6 : 12;
-        centre.push(n);
-        for (let k = 0; k < core; k++) { const sp = k ? .007 : 0; put(x + g() * sp, y + g() * sp, z + g() * sp, apex ? BLUE[k % 3 ? 5 : 6] : (k % 4 ? WHITE : BLUE[7]), 0, (apex ? 1.35 : 1.05) + r() * .45, .85, 0, 0, j); }
-        for (let k = 0; k < halo; k++) { const sp = .035 + r() * .04, an = r() * TAU; put(x + Math.cos(an) * sp, y + Math.sin(an) * sp, z + g() * .01, apex ? BLUE[5] : BLUE[6], 0, .5 + r() * .3, .2, 0, 0, j); }
-      });
-      // dotted lines: crisp beads on the line and a soft glow beside it; q is when each bead is reached
-      STROKES.forEach(([a, b, t0, d]) => {
-        const A = pts[a], B = pts[b], len = Math.hypot(B[0] - A[0], B[1] - A[1], B[2] - A[2]), steps = Math.max(4, Math.round(len / .021));
-        for (let k = 1; k < steps; k++) {
-          const v = k / steps, x = mix(A[0], B[0], v), y = mix(A[1], B[1], v), z = mix(A[2], B[2], v);
-          put(x, y, z, BLUE[6], 1, .36, .72, 1, t0 + v * d, -1);
-          if (!mobile || k % 2) put(x + g() * .014, y + g() * .014, z + g() * .01, BLUE[5], 0, .42, .2, 1, t0 + v * d, -1);
-        }
-      });
-      // haze behind the mark, a faint diagonal band far away, and a deep field of stars
-      const room = N - n, nHaze = Math.round(room * .14), nBand = Math.round(room * .12);
-      for (let k = 0; k < nHaze; k++) put(g() * .95, g() * .75 - .05, .4 + Math.abs(g()) * .8, BLUE[2 + Math.floor(r() * 3)], 0, .55 + r() * .4, .05 + r() * .09, 2, 0, -1);
-      for (let k = 0; k < nBand; k++) { const u = r() * 2 - 1; put(u * 3.6, u * 1.1 - .2 + g() * .32, 2.2 + r() * 1.4, BLUE[3 + Math.floor(r() * 3)], 0, .35 + r() * .3, .08 + .14 * r(), 2, 0, -1); }
+      const nGas = Math.round(N * .43), nPuff = Math.round(N * .075), nA = Math.round(N * .27), nStar = mobile ? 3 : 4;
+      // gas: overlapping clouds of different colours, and two faint filaments
+      const blobs = [[0, .05, 0, .95, .8, .45, [BLUE[4], BASE[3], BLUE[3]]], [-.75, -.35, .2, .65, .5, .4, [BASE[1], BASE[1], BLUE[4]]],
+        [.75, .3, -.1, .6, .5, .35, [BASE[2], BASE[0], BLUE[4]]], [.1, -.75, .1, .8, .35, .3, [BASE[3], BLUE[4]]], [-.3, .85, -.2, .55, .35, .3, [BASE[1], BLUE[5]]]];
+      for (let k = 0; k < nGas; k++) {
+        let x, y, z, col;
+        if (r() < .22) { const u = r() * 2 - 1, side = k & 1 ? 1 : -1; x = u * 1.9; y = side * (.55 + .25 * Math.sin(u * 2.2 + side)) + g() * .06; z = g() * .25; col = side > 0 ? BASE[3] : BLUE[4]; }
+        else { const b = blobs[Math.floor(Math.pow(r(), 1.2) * blobs.length)]; x = b[0] + g() * b[3] * .55; y = b[1] + g() * b[4] * .55; z = b[2] + g() * b[5] * .5; col = b[6][Math.floor(r() * b[6].length)]; }
+        const core = Math.exp(-(x * x / 1.1 + y * y / .7));
+        put(x, y, z, x, y, z, col, .45 + r() * .5, .08 + .22 * core * r() + .06 * r(), 0);
+      }
+      // large faint puffs give the cloud volume
+      for (let k = 0; k < nPuff; k++) {
+        const b = blobs[k % blobs.length], x = b[0] + g() * b[3] * .45, y = b[1] + g() * b[4] * .45, z = b[2] + g() * b[5] * .4;
+        put(x, y, z, x, y, z, b[6][k % b[6].length], 2.8 + r() * 2.4, .04 + .045 * r(), 0);
+      }
+      // the mark: gas condensing along each stroke, a bright core with a wider glow around it
+      const lens = A_STROKES.map(([x0, y0, x1, y1]) => Math.hypot(x1 - x0, y1 - y0)), total = lens.reduce((a, b) => a + b);
+      for (let k = 0; k < nA; k++) {
+        let pick = r() * total, j = 0; while (pick > lens[j]) pick -= lens[j++];
+        const [x0, y0, x1, y1] = A_STROKES[j], u = r(), [ax, ay] = toWorld(mix(x0, x1, u), mix(y0, y1, u));
+        const len = lens[j], px = (y1 - y0) / len, py = (x1 - x0) / len, halo = r() < .5, sd = halo ? .12 : .045 + .015 * Math.sin(u * 9 + j);
+        const off = g() * sd, x = ax + px * off, y = ay + py * off, z = g() * (halo ? .08 : .04);
+        const hx = x + g() * .32, hy = y + g() * .3, hz = z + g() * .25;
+        const col = halo ? [BLUE[4], BLUE[5], BASE[3]][Math.floor(r() * 3)] : [BLUE[6], BLUE[7], BLUE[6], BASE[0], WHITE][Math.floor(r() * 5)];
+        put(x, y, z, hx, hy, hz, col, halo ? .65 + r() * .4 : .5 + r() * .4, halo ? .07 + .08 * r() : .2 + .22 * r(), 1);
+      }
+      // young stars: the apex in ice blue, a few small ones on the mark, a few loose in the cloud
+      const starAt = (x, y, z, col, size, count, kind) => { for (let k = 0; k < count; k++) { const sp = k ? .006 : 0; put(x + g() * sp, y + g() * sp, z + g() * sp, x + g() * .2, y + g() * .2, z, col, size * (.8 + r() * .4), .8, kind); } };
+      const apexSlot = n; starAt(APEX[0], APEX[1], .05, BLUE[5], 1.25, mobile ? 10 : 16, 2);
+      [[22, 26], [47, 36], [12, 46]].forEach(([lx, ly]) => { const [x, y] = toWorld(lx, ly); starAt(x, y, g() * .05, WHITE, .8, nStar, 2); });
+      for (let k = 0; k < 7; k++) { const x = g() * .9, y = g() * .6, z = g() * .3; starAt(x, y, z, r() < .7 ? WHITE : WARM[2], .7, nStar, 3); }
+      // a deep field of faint stars behind everything
       while (n < N) {
-        const mag = Math.pow(r(), 2.6), tint = r();
-        put((r() * 2 - 1) * 3.4, (r() * 2 - 1) * 2.2, -1.1 + r() * 4.4, tint < .72 ? BLUE[5 + Math.floor(r() * 4)] : tint < .92 ? WHITE : WARM[2 + Math.floor(r() * 3)], 0, .3 + mag * .75, .12 + .5 * mag, 3, 0, -1);
+        const mag = Math.pow(r(), 2.6), tint = r(), x = (r() * 2 - 1) * 3.4, y = (r() * 2 - 1) * 2.2, z = -1.1 + r() * 4.4;
+        put(x, y, z, x, y, z, tint < .72 ? BLUE[5 + Math.floor(r() * 4)] : tint < .92 ? WHITE : WARM[2 + Math.floor(r() * 3)], .3 + mag * .7, .1 + .45 * mag, 4);
       }
       finishMap(L);
       L.inv = new Int32Array(N); for (let i = 0; i < N; i++) L.inv[L.map[i]] = i;
-      L.centre = centre;
+      L.apex = apexSlot;
       return L;
     }
-    function markAt(s, out) {
-      const kind = C.kind[s], t = st - C0;
-      out.x = C.x[s]; out.y = C.y[s]; out.z = C.z[s];
-      out.col = C.col[s]; out.sty = C.sty[s]; out.size = C.size[s]; out.a = C.a[s]; out.col2 = -1; out.w2 = 0;
-      const pulse = !reduce.matches && t > DRAWN + 1.2 ? (t - DRAWN - 1.2) % PULSE : -9;
-      if (kind === 0) {                        // star: lights when the line reaches it, then flares with each pulse
-        const ts = starT[C.star[s]], on = easeOut((t - ts + .1) / .35), flash = Math.exp(-Math.pow((t - ts - .12) / .16, 2));
-        const pf = pulse > -9 ? Math.exp(-Math.pow((pulse - ts * .8) / .18, 2)) : 0;
-        out.a *= mix(.12, 1, on); out.size *= mix(.55, 1, on) * (1 + .5 * flash + .35 * pf);
-      } else if (kind === 1) {                 // line bead: appears as the drawing passes, brightens as a pulse passes
-        const q = C.q[s], on = clamp((t - q) / .12), pb = pulse > -9 ? Math.exp(-Math.pow((pulse - q * .8) / .09, 2)) : 0;
-        out.a *= on * (1 + 1.1 * pb); out.size *= 1 + .7 * pb;
-        if (pb > .05) { out.col2 = WHITE; out.w2 = Math.min(1, pb); }
-      } else if (kind === 3) {                 // background star: a slow twinkle
-        out.a *= .72 + .28 * Math.sin(clock * C.tw[s] + C.ph[s]);
+    function nebulaAt(s, out) {
+      const kind = C.kind[s], ph = C.ph[s], w = C.w[s];
+      let x = C.x[s], y = C.y[s], z = C.z[s];
+      out.col = C.col[s]; out.sty = 0; out.size = C.size[s]; out.a = C.a[s]; out.col2 = -1; out.w2 = 0;
+      if (kind === 1 || kind === 2) {           // gathers from the cloud into the mark
+        const f = formAt(), k = clamp(f * 1.15 - (ph / TAU) * .15);
+        x = mix(C.hx[s], x, k); y = mix(C.hy[s], y, k); z = mix(C.hz[s], z, k);
+        if (kind === 1) { out.a *= mix(.45, 1, k); x += Math.sin(clock * .5 + ph) * .006; y += Math.cos(clock * .43 + ph) * .006; }
+        else { out.a *= mix(.1, 1, k); out.size *= mix(.5, 1, k) * (1 + .08 * Math.sin(clock * 1.7 + ph)); }
+      } else if (kind === 0) {                  // gas turns slowly and breathes
+        const an = clock * .02 * w, c = Math.cos(an), sn = Math.sin(an);
+        const x0 = x; x = x0 * c - z * sn; z = x0 * sn + z * c; y += Math.sin(clock * .21 + ph) * .02;
+        out.a *= .8 + .2 * Math.sin(clock * .3 + ph);
+      } else if (kind === 3) {
+        out.a *= .75 + .25 * Math.sin(clock * 1.1 + ph);
+      } else {
+        out.a *= .72 + .28 * Math.sin(clock * (.4 + Math.abs(w)) + ph);
       }
+      out.x = x; out.y = y; out.z = z;
     }
 
     // Helix: two glowing backbones, base-pair rungs in two colour pairs, and a faint sheath of drifting particles.
@@ -356,7 +366,7 @@
     }
     function target(i, out) {
       switch (stage) {
-        case 0: markAt(C.map[i], out); break;
+        case 0: nebulaAt(C.map[i], out); break;
         case 1: helixAt(HX.map[i], out); break;
         default: cardAt(CD.map[i], stage - 2, out);
       }
@@ -445,8 +455,8 @@
       }
       ctx.globalAlpha = 1;
       if (cardStage && nCards) overlays();
-      lineFade = stage === 0 ? 1 : lineFade * Math.exp(-dt * 7);
-      if (lineFade > .01) markOverlay();
+      glowFade = stage === 0 ? 1 : glowFade * Math.exp(-dt * 6);
+      if (glowFade > .01) apexGlow();
       ctx.globalCompositeOperation = 'source-over';
     }
     function dot(sty, col, x, y, rad, alpha) {
@@ -528,45 +538,15 @@
       }
     }
 
-    // Constellation extras, drawn flat over the particles: a hairline along each stroke, light spikes on the stars,
-    // a ring as each star lights, and a breathing glow on the apex. Lines follow the stars as they fly off to the helix.
-    const SP = Array.from({ length: 14 }, () => ({ x: 0, y: 0, s: 1, v: false }));
-    function markOverlay() {
-      const t = stage === 0 ? st - C0 : 99, fade = lineFade;
-      for (let j = 0; j < 13; j++) { const i = C.inv[C.centre[j]]; project(X[i], Y[i], Z[i], pj); Object.assign(SP[j], pj); }
-      SP[13].x = (SP[6].x + SP[7].x) / 2; SP[13].y = (SP[6].y + SP[7].y) / 2; SP[13].v = SP[6].v && SP[7].v;
-      ctx.globalCompositeOperation = 'lighter'; ctx.lineCap = 'round';
-      for (const [a, b, t0, d] of STROKES) {
-        const f = clamp((t - t0) / d); if (f <= 0 || !SP[a].v || !SP[b].v) continue;
-        const A = SP[a], B = SP[b], x = mix(A.x, B.x, f), y = mix(A.y, B.y, f);
-        ctx.globalAlpha = .1 * fade; ctx.strokeStyle = 'rgb(124,200,236)'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(x, y); ctx.stroke();
-        ctx.globalAlpha = .32 * fade; ctx.strokeStyle = 'rgb(190,228,250)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(x, y); ctx.stroke();
-      }
-      const unit = F / 600;
-      for (let j = 0; j < 13; j++) {
-        const P = SP[j]; if (!P.v) continue;
-        const on = easeOut((t - starT[j] + .1) / .35); if (on <= 0) continue;
-        const apex = !j, L = (apex ? 30 : 15 + (j * 7 % 5) * 2) * unit * on * (stage === 0 ? 1 : fade);
-        const col = apex ? '124,200,236' : '220,236,255';
-        for (const [dx, dy] of [[1, 0], [0, 1]]) {
-          const gr = ctx.createLinearGradient(P.x - dx * L, P.y - dy * L, P.x + dx * L, P.y + dy * L);
-          gr.addColorStop(0, `rgba(${col},0)`); gr.addColorStop(.5, `rgba(${col},${(apex ? .75 : .45) * fade})`); gr.addColorStop(1, `rgba(${col},0)`);
-          ctx.globalAlpha = 1; ctx.strokeStyle = gr; ctx.lineWidth = apex ? 1.2 : .8;
-          ctx.beginPath(); ctx.moveTo(P.x - dx * L, P.y - dy * L); ctx.lineTo(P.x + dx * L, P.y + dy * L); ctx.stroke();
-        }
-        const rp = (t - starT[j] - .05) / .9;
-        if (rp > 0 && rp < 1 && !reduce.matches) {
-          ctx.globalAlpha = (1 - rp) * (1 - rp) * .5 * fade; ctx.strokeStyle = `rgb(${col})`; ctx.lineWidth = 1;
-          ctx.beginPath(); ctx.arc(P.x, P.y, (6 + 34 * easeOut(rp)) * unit * (apex ? 1.4 : 1), 0, TAU); ctx.stroke();
-        }
-        if (apex) {
-          const br = (.8 + .2 * Math.sin(clock * 1.3)) * on * fade, rad = 70 * unit;
-          const gl = ctx.createRadialGradient(P.x, P.y, 0, P.x, P.y, rad);
-          gl.addColorStop(0, `rgba(124,200,236,${.3 * br})`); gl.addColorStop(.35, `rgba(124,200,236,${.08 * br})`); gl.addColorStop(1, 'rgba(124,200,236,0)');
-          ctx.globalAlpha = 1; ctx.fillStyle = gl; ctx.fillRect(P.x - rad, P.y - rad, rad * 2, rad * 2);
-        }
-      }
-      ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    // A soft ice-blue glow on the apex star, growing as the mark forms; it follows the star when it flies off.
+    function apexGlow() {
+      const i = C.inv[C.apex];
+      project(X[i], Y[i], Z[i], pj); if (!pj.v) return;
+      const f = stage === 0 ? formAt() : 1, br = (.85 + .15 * Math.sin(clock * 1.2)) * f * glowFade, rad = F * .14;
+      const gl = ctx.createRadialGradient(pj.x, pj.y, 0, pj.x, pj.y, rad);
+      gl.addColorStop(0, `rgba(124,200,236,${.26 * br})`); gl.addColorStop(.3, `rgba(124,200,236,${.07 * br})`); gl.addColorStop(1, 'rgba(124,200,236,0)');
+      ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 1; ctx.fillStyle = gl; ctx.fillRect(pj.x - rad, pj.y - rad, rad * 2, rad * 2);
+      ctx.globalCompositeOperation = 'source-over';
     }
 
     /* ---------- loop and lifecycle ---------- */
@@ -577,7 +557,7 @@
       schedule();
     }
     function schedule() { if (!raf && visible && !document.hidden && !reduce.matches && N) raf = requestAnimationFrame(tick); }
-    function still() { st = stage === 3 ? 4.5 : stage === 4 ? 3 : stage === 0 ? C0 + DRAWN + 1 : 0; TR = 0; frame(0, true); }
+    function still() { st = stage === 3 ? 4.5 : stage === 4 ? 3 : stage === 0 ? C0 + FORM0 + FORM_T + 1 : 0; TR = 0; frame(0, true); }
 
     function init() {
       cancelAnimationFrame(raf); raf = 0; last = 0;
@@ -596,7 +576,7 @@
       R0 = mobile ? 1.0 : clamp(F / 660, 1.0, 1.5);
       if (!SPRITES) SPRITES = [PAL.map(c => sprite(c, false)), PAL.map(c => sprite(c, true))];
       alloc();
-      C = buildMark(); HX = buildHelix(); CD = buildCards();
+      C = buildNebula(); HX = buildHelix(); CD = buildCards();
       bx0 = new Float32Array(cards.length); by0 = new Float32Array(cards.length); bx1 = new Float32Array(cards.length); by1 = new Float32Array(cards.length);
       buildBackdrop();
       { const r = rng(404); twinkle = Array.from({ length: mobile ? 24 : 54 }, () => [r(), r(), .6 + r() * .9, .25 + r() * .5, r() * TAU]); }
