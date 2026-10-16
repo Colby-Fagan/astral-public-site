@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#000000">
+<title>ASTRAL · Scanner demo</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="frame">
+<header class="top">
+  <a class="brand" href="../index.html" aria-label="ASTRAL home"><svg xmlns="http://www.w3.org/2000/svg" class="logo" aria-hidden="true" viewBox="0 0 312 64"><g transform="translate(1.464788732,10.169014085) scale(0.704225352)"><circle cx="32" cy="6" r="3.4" fill="#7cc8ec"/><circle cx="27" cy="16" r="3.4" fill="currentColor"/><circle cx="37" cy="16" r="3.4" fill="currentColor"/><circle cx="22" cy="26" r="3.4" fill="currentColor"/><circle cx="42" cy="26" r="3.4" fill="currentColor"/><circle cx="17" cy="36" r="3.4" fill="currentColor"/><circle cx="27" cy="36" r="3.4" fill="currentColor"/><circle cx="37" cy="36" r="3.4" fill="currentColor"/><circle cx="47" cy="36" r="3.4" fill="currentColor"/><circle cx="12" cy="46" r="3.4" fill="currentColor"/><circle cx="52" cy="46" r="3.4" fill="currentColor"/><circle cx="7" cy="56" r="3.4" fill="currentColor"/><circle cx="57" cy="56" r="3.4" fill="currentColor"/></g><g fill="currentColor"><g transform="translate(58,9)"><path d="M35 6C30 2 25 1 19 1 9 1 3 6 3 13c0 7 5 10 15 12l4 1c7 2 10 4 10 8 0 5-4 7-11 7-7 0-12-3-17-7l-3 5c5 5 12 7 20 7 10 0 17-5 17-12 0-8-5-11-15-14l-5-1c-7-2-9-3-9-7 0-4 4-6 10-6 5 0 10 2 14 5Z" transform="translate(0,2.111111111) scale(1,.888888889)"/></g><g transform="translate(111,9)"><path d="M0 3h40v5H23v35h-6V8H0Z"/></g><g transform="translate(164,9)"><path fill-rule="evenodd" d="M3 3h18c11 0 17 5 17 13 0 6-4 11-11 13l13 14h-8L19 29H9v14H3Zm6 5v16h12c7 0 11-3 11-8s-4-8-11-8Z"/></g><g transform="translate(217,9)"><path d="M1 43 18 3h5l17 40h-6L20.5 10 7 43Z M10 29h21v5H10Z"/></g><g transform="translate(270,9)"><path d="M3 3h6v35h28v5H3Z"/></g></g></svg></a>
+  <span class="product">Scanner demo</span>
+  <nav aria-label="Site"><a href="../index.html">Overview</a><a href="#risk-formula" id="formula-link">Risk formula</a></nav>
+  <span class="pill ok">Saved results</span>
+</header>
+<main>
+<div id="home-view">
+  <p class="eyebrow">Preloaded demo · saved results</p>
+  <ol class="steps" aria-label="Demo steps">
+    <li><b>1</b><strong>Select logs</strong></li>
+    <li><b>2</b><strong>Analyze</strong></li>
+    <li><b>3</b><strong>Review</strong></li>
+  </ol>
+  <section class="panel" id="select-panel" aria-labelledby="select-title">
+    <div class="selection-head"><div><h1 id="select-title">Choose preloaded logs</h1><p class="muted">The demo plays recorded stage results. It does not run new analysis.</p></div><span id="selected-count" aria-live="polite"></span></div>
+    <div class="selection-actions"><button class="link" type="button" id="select-all">Select all</button><button class="link" type="button" id="select-none">Clear selection</button></div>
+    <div id="log-selector" class="log-selector" role="group" aria-label="Preloaded logs"></div>
+    <div class="actions"><button class="primary" type="button" id="analyze" disabled>Analyze</button><button class="secondary" type="button" id="reset">Reset</button></div>
+  </section>
+  <p id="error" class="error" role="alert" hidden></p>
+  <section id="results" aria-labelledby="batch-title" hidden>
+    <div class="results-head"><div><p class="eyebrow">Saved results</p><h1 id="batch-title">Results</h1><p id="batch-status" class="muted" aria-live="polite"></p></div>
+      <dl class="metrics"><div><dt>Completed</dt><dd id="completed">0 / 0</dd></div><div><dt>Playback time</dt><dd id="playback-time">0.0 s</dd></div><div><dt>Recorded analysis time</dt><dd id="recorded-time">—</dd></div><div><dt>Recorded model cost</dt><dd id="recorded-cost">—</dd></div></dl>
+    </div>
+    <div class="progress" id="progress" role="progressbar" aria-label="Saved-result playback" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-bar"></span></div>
+    <div id="now-playing" class="now-playing" aria-label="Recorded pipeline playback" hidden>
+      <ol class="pipeline-stages">
+        <li id="play-keyword" class="pipeline-stage"><span class="pipeline-number">1</span><div><strong>Keyword filter</strong><span class="pipeline-detail">Waiting</span></div><span class="pipeline-state">Waiting</span></li>
+        <li id="play-concept" class="pipeline-stage"><span class="pipeline-number">2</span><div><strong>Concept filter</strong><span class="pipeline-detail">Waiting</span></div><span class="pipeline-state">Waiting</span></li>
+        <li id="play-judges" class="pipeline-stage"><span class="pipeline-number">3</span><div><strong>Model judges</strong><span class="pipeline-detail">Waiting</span></div><span class="pipeline-state">Waiting</span></li>
+      </ol>
+    </div>
+    <div class="funnel-wrap"><div class="funnel-caption"><strong>How conversations were filtered</strong><span class="scale-legend"><span>Lower</span><span class="scale-bar"></span><span>Higher</span></span></div><div id="funnel" class="funnel" role="img" aria-label="Filtering summary"></div><div id="funnel-legend" class="funnel-legend"></div></div>
+    <div id="tabs" class="tabs" role="tablist" aria-label="Result groups"></div>
+    <section class="tab-panel" id="tab-panel" role="tabpanel" tabindex="0"><h2 id="ranked-heading" class="ranked-heading">Conversations ranked by risk of misuse for human review</h2><p id="panel-note" class="panel-note"></p><div id="case-list" class="case-list"></div></section>
+  </section>
+</div>
+
+<article id="formula-view" class="formula-page" hidden>
+  <div class="report-nav"><a href="#" id="formula-back" class="back">← Back</a></div>
+  <header class="formula-intro"><p class="eyebrow">Risk formula</p><h1>How the risk score works</h1><p class="lead">The score sets review order for cases that reach the judges. It is not a probability of harm.</p></header>
+  <section class="formula-card"><p class="formula-main">Score = <b>30</b> × Topic + <b>30</b> × Realization + <b>25</b> × Scope + <b>15</b> × Jailbreaking</p><div class="weight-bar" id="weight-bar" aria-hidden="true"></div></section>
+  <section class="formula-part"><h2><span class="part-num">1</span>Topic <span class="weight">30 points</span></h2><p>Each dangerous biology <a href="https://arxiv.org/abs/2607.14479" target="_blank" rel="noopener noreferrer">(CA)</a> pathway adds 10 points; each dual-use biology <a href="https://arxiv.org/abs/2607.14479" target="_blank" rel="noopener noreferrer">(BD)</a> pathway adds 5. Up to three pathways count.</p><div id="topic-table"></div></section>
+  <section class="formula-part"><h2><span class="part-num">2</span>Realization <span class="weight">30 points</span></h2><p>Realization = 0.70 × scientific capability + 0.30 × highest kill chain stage, after each rating is converted using the tables.</p><div class="two-tables"><div id="table-SC"></div><div id="table-KC"></div></div></section>
+  <section class="formula-part"><h2><span class="part-num">3</span>Scope <span class="weight">25 points</span></h2><div id="table-SP"></div></section>
+  <section class="formula-part"><h2><span class="part-num">4</span>Jailbreaking <span class="weight">15 points</span></h2><div id="table-JB"></div></section>
+  <section class="calculator" aria-labelledby="calc-title"><h2 id="calc-title">Try the calculator</h2><div class="calc-grid"><label>Scientific capability<select id="calc-SC"></select></label><label>Highest kill chain stage<select id="calc-KC"></select></label><label>Scope<select id="calc-SP"></select></label><label>Jailbreaking<select id="calc-JB"></select></label><label>Dangerous biology <a href="https://arxiv.org/abs/2607.14479" target="_blank" rel="noopener noreferrer">(CA)</a> pathways<select id="calc-CA"></select></label><label>Dual-use biology <a href="https://arxiv.org/abs/2607.14479" target="_blank" rel="noopener noreferrer">(BD)</a> pathways<select id="calc-BD"></select></label></div><div id="calc-result" class="calc-result" aria-live="polite"></div></section>
+  <section class="formula-part"><h2>Score bands</h2><div class="band-scale" aria-hidden="true"><span style="left:20%">20</span><span style="left:40%">40</span><span style="left:60%">60</span></div><div class="band-labels"><span>Lower<br><small>below 20</small></span><span>Moderate<br><small>20–39</small></span><span>Elevated<br><small>40–59</small></span><span>High<br><small>60 and above</small></span></div><p class="muted">Bands label review priority; they are not calibrated probabilities. Missing or failed assessments remain unscored.</p><p class="small muted" id="formula-version"></p></section>
+</article>
+
+<article id="report-view" hidden>
+  <div class="report-nav"><a href="#" id="back" class="back">← All results</a><span id="report-position" class="muted"></span><span class="report-nav-buttons"><a href="#" id="prev" class="nav-button">← Previous</a><a href="#" id="next" class="nav-button">Next →</a></span></div>
+  <div class="report-grid"><div class="report-main"><div class="report-head"><div class="report-title"><p class="eyebrow">Case report · saved result</p><h1 id="case-title"></h1></div></div><div id="case-summary"></div><ol id="journey" class="journey" aria-label="Recorded checks"></ol><section id="scores-section"><h2>Judge ratings</h2><div id="variables" class="ratings"></div></section><section id="topics"><h2>Pathway selection</h2><div id="topic-content"></div></section><details id="technical" class="technical"><summary>Technical details</summary><div id="risk-breakdown"></div><div id="stage-details"></div></details></div><aside class="report-side"><div class="conversation" id="conversation"><h2>Redacted conversation</h2><div id="turns"></div></div></aside></div>
+</article>
+</main>
+<footer><span>Preloaded demo · saved results</span><span class="brand-expansion">Activity Scanner Tool for Risk Assessment of Logs</span><p class="source-attribution">Risk-category source: SecureBio, <a href="https://arxiv.org/abs/2607.14479" target="_blank" rel="noopener noreferrer">BioTIER-Policy</a>. This attribution does not imply SecureBio’s endorsement of ASTRAL, its methodology, or its outputs.</p></footer>
+</div>
+<script src="dataset.js" defer></script>
+<script src="app.js" defer></script>
+</body>
+</html>

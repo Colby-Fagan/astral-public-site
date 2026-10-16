@@ -1,72 +1,284 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#090e10"><meta name="robots" content="index, follow"><link rel="canonical" href="https://astral.detection.bio/"><meta name="description" content="ASTRAL: Biological misuse detection for AI chat logs. Contact ASTRAL@detection.bio."><title>ASTRAL — Biological misuse detection for AI chat logs</title><meta property="og:type" content="website"><meta property="og:site_name" content="ASTRAL"><meta property="og:title" content="ASTRAL — Biological misuse detection for AI chat logs"><meta property="og:description" content="Biological misuse detection for AI chat logs."><meta property="og:url" content="https://astral.detection.bio/"><meta property="og:image" content="https://astral.detection.bio/assets/social-preview.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Biological misuse detection for AI chat logs, over a field of dots"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://astral.detection.bio/assets/social-preview.png"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="overview.css?v=26"><script src="atmosphere.js?v=13" defer></script></head>
-<body><canvas id="data-atmosphere" aria-hidden="true"></canvas><div class="site-foreground"><a class="skip-link" href="#overview">Skip to content</a>
-<header class="site-header"><a href="#overview" aria-label="ASTRAL overview"><img src="assets/astral-lockup-dark.svg" width="172" height="35" alt="ASTRAL"><span class="brand-expansion">Activity Scanner Tool for Risk Assessment of Logs</span></a><nav aria-label="Main navigation"><a href="#contact">Collaborate</a><a href="#team">Team</a><a href="ASTRAL-project-overview.pdf?v=a82371645cff" download>Download PDF</a></nav></header>
-<main><section class="landing-intro" aria-labelledby="document-title"><header class="project-heading"><h1 id="document-title" aria-label="Biological misuse detection for AI chat logs"><em>Biological misuse</em><br>detection for<br>AI chat logs</h1><p class="affiliation" data-source="1"><em>Cambridge Boston Alignment Initiative (CBAI) AI×Biosecurity Fellowship</em></p></header>
-<section class="headline"><p data-source="3"><strong>ASTRAL scans an organization&#x27;s own AI transcripts for biological misuse, returning a risk score and threat characterization that helps any team, experts and nonexperts alike, cut through log volume and check what may be a real threat.</strong></p></section></section>
-<article id="overview" class="document" aria-labelledby="document-title">
-<figure class="system-overview approved-overview" aria-labelledby="visual-overview-title">
-  <figcaption><h2 id="visual-overview-title">Visual overview</h2><a href="assets/astral-approved-workflow.svg" target="_blank" rel="noopener">View full-size diagram</a></figcaption>
-  <picture><source media="(max-width: 1100px)" srcset="assets/astral-approved-workflow-mobile.svg"><img src="assets/astral-approved-workflow.svg" width="1834" height="604" alt="The variable table defines misuse scenarios and generates synthetic transcripts. At deployment, real transcripts held by deployer of ASTRAL replace synthetic input. The multistage scanner selects concerning logs and characterizes each case using the variable table. Each triaged case receives a report containing its risk score, evidence and rationale, which sets priority for human review."></picture>
-</figure>
-<section class="document-section"><h2 data-source="4"><span class="section-number">01</span> The gap</h2>
-<p data-source="5">A frontier provider&#x27;s safeguards are bound to its own model and API. They do not follow when a motivated actor moves to an open-weight model and runs it on third-party inference that does little or no monitoring [1]. Today, providers handle biological-misuse risk mostly through inline classifiers that screen individual responses [2]; session-level review of who is doing what across a conversation happens selectively, often only during active investigations [3]. Non-frontier providers have limited or no standardized equivalent, and experts specifically warn that these surfaces will &quot;not attract the attention of AI companies&quot; [1]. The organizations holding those logs (inference providers, AI-scientist platforms, enterprise deployers) rarely have a dedicated biosecurity function.</p>
-<p data-source="6">AI bio-capabilities are advancing. AI already outperforms expert virologists on wet-lab troubleshooting in test settings [5], and leading open-weight models trail closed frontier models by about eight months in biological capabilities [6]. <strong>If this trend continues, today&#x27;s frontier biological capabilities could reach unmonitored platforms in less than a year.</strong> The safeguards that exist are mostly pre-deployment and first-party, built inside frontier companies for their own models. <strong>ASTRAL is the post-deployment complement.</strong></p>
-</section>
-<section class="document-section"><h2 data-source="7"><span class="section-number">02</span> What it is</h2>
-<p data-source="8">ASTRAL reads multi-turn conversations, because intent accumulates across turns (persistence past refusals, session-hopping, incremental progress) and rarely sits in one flaggable message. It distills each flagged conversation into a structured threat report for a human reviewer: apparent actor and goal, the threat pathway implicated, and a review priority. It runs always-on against incoming logs or retrospectively over historical ones, and it is built on Inspect Scout [9]. </p>
-</section>
-<section class="document-section"><h2 data-source="9"><span class="section-number">03</span> How it works</h2>
-<p data-source="10">Three pieces, built with input from biosecurity expert affiliates of organizations like SecureBio, OpenAI, and MIT. </p><ol class="components"><li data-source="11"><strong>Variable table: </strong>the ground truth. It breaks an AI bio-misuse scenario into nine variables across four categories (the actor, the action, the agent, the target), drawing on the threat-modeling literature and SecureBio&#x27;s BioTIER content sets [10]. The same table defines both the scenarios we generate and the rubric the scanner scores against, so input and output can be compared directly and the scanner improved on the difference.</li>
-<li data-source="12"><strong>Synthetic transcript pipeline</strong>: built on Inspect AI, the pipeline has one model role-play a benign or malicious actor against an assistant model, producing transcripts that range from routine biology questions to deliberate misuse attempts. Models, scenarios, and actor profiles swap independently. </li>
-<li data-source="13"><strong>Multilayer scanner:</strong> keeps cost down. A keyword filter and an embedding filter discard the majority of logs cheaply. Only the small remainder reaches the LLM scanner, which classifies each transcript against the variable table and writes the threat report. </li>
-</ol></section>
-<section class="document-section"><h2 data-source="14"><span class="section-number">04</span> Why it&#x27;s different, and who runs it</h2>
-<p data-source="15">Frontier labs already run automated multi-turn scanning. A bio-specific, non-provider version of that capability does not yet exist. Because ASTRAL is defined by the log it reads rather than the provider it sits on, each log-holder runs it in their own secure environment and adapts it to their own data. The log-holders are the deployers: AI-scientist platforms, third-party inference providers, and life-science enterprises. So far we have developed and evaluated on synthetic transcripts. We are now seeking a log-holding collaborator. We will adapt ASTRAL to their platform and work with their team to strengthen bio-misuse detection, and in return ASTRAL gets validated and refined in a real deployment.</p>
-</section>
-      <section class="contact wrap" id="contact" aria-labelledby="contact-title">
-        <h2 id="contact-title">Seeking a real-world<br>validation partner</h2>
-        <p>We’re seeking a log-holding collaborator to validate ASTRAL in a real deployment. We’ll adapt ASTRAL to your platform and work with your team to strengthen bio-misuse detection.</p>
-        <p class="contact-note">Interested in collaborating, or want to learn more? Get in touch.</p>
-        <a class="email-link" href="mailto:ASTRAL@detection.bio"><svg class="email-icon" viewBox="0 0 24 18" aria-hidden="true" focusable="false"><rect x="1" y="1" width="22" height="16" rx="2"/><path d="m2 3 10 7 10-7"/></svg>ASTRAL@detection.bio</a>
-        <a class="download-link" href="ASTRAL-project-overview.pdf?v=a82371645cff" download>Download the one-page project overview (PDF) <span aria-hidden="true">↓</span></a>
-      </section>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000000">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://astral.detection.bio/">
+<meta name="description" content="ASTRAL scans an organization’s own AI chat logs for biological misuse and ranks conversations for human review. Try the demo or contact ASTRAL@detection.bio.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ASTRAL">
+<meta property="og:title" content="ASTRAL — Biological misuse detection for AI chat logs">
+<meta property="og:description" content="ASTRAL scans an organization’s own AI chat logs for biological misuse and ranks conversations for human review. Try the demo or contact ASTRAL@detection.bio.">
+<meta property="og:url" content="https://astral.detection.bio/">
+<meta property="og:image" content="https://astral.detection.bio/assets/social-preview.png?v=d7281f90005f">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ASTRAL: biological misuse detection for AI chat logs, beside the ASTRAL mark drawn as a constellation">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://astral.detection.bio/assets/social-preview.png?v=d7281f90005f">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<title>ASTRAL — Biological misuse detection for AI chat logs</title>
+<link rel="stylesheet" href="fonts.css?v=89ebba103f18">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+/* Layout: the dotted scene is pinned full-bleed behind the page while five text panels scroll over its left side;
+   below it, contact, writing and team continue on the same black ground. */
+:root{
+  --bg:#000; --ink:#f4f7fa; --text:#c7ced5; --muted:#8a939c; --faint:#59626b;
+  --line:rgba(255,255,255,.12); --line-2:rgba(255,255,255,.2);
+  --ice:#7cc8ec; --ice-deep:#0e2a36; --amber:#f4b856;
+  --sans:'Host Grotesk','Helvetica Neue',Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  --gutter:clamp(20px,3vw,40px); --max:1400px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:18px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,p{margin:0}
+.i{font-family:var(--mono);font-style:italic;font-weight:400;letter-spacing:-.02em}
+.skip-link{position:absolute;left:12px;top:-80px;z-index:40;background:#fff;color:#000;padding:10px 14px;font-size:14px}.skip-link:focus{top:12px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--ice);outline-offset:3px}
+.wrap{max-width:var(--max);margin:0 auto;padding-inline:var(--gutter)}
 
-</article>
+/* header */
+.site-header{position:fixed;inset:0 0 auto 0;z-index:20;height:68px;display:flex;align-items:stretch;border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(0,0,0,.78),rgba(0,0,0,.45));backdrop-filter:blur(10px) saturate(1.2);-webkit-backdrop-filter:blur(10px) saturate(1.2)}
+.brand{display:flex;align-items:center;padding:0 var(--gutter);border-right:1px solid var(--line)}
+.logo{width:138px;height:auto;display:block}.logo-apex{fill:var(--ice)}.logo-dots circle,.logo-type{fill:#fff}
+.site-header nav{display:flex;align-items:center;gap:26px;padding:0 26px;font-size:13.5px;color:#fff}
+.site-header nav.right{margin-left:auto;padding-right:var(--gutter)}
+.site-header nav a:not(.btn){opacity:.82;transition:opacity .2s}.site-header nav a:not(.btn):hover{opacity:1}
+.btn{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--ice);padding:8px 16px;font-size:13.5px;color:#fff;background:rgba(14,42,54,.25);transition:background .2s,border-color .2s}
+.btn:hover{background:var(--ice-deep)}
+.btn.solid{background:#fff;color:#000;border-color:#fff}.btn.solid:hover{background:var(--ice);border-color:var(--ice)}
 
+/* scrolly */
+.scrolly{position:relative;display:grid;grid-template-columns:minmax(0,1fr)}
+.pin{grid-area:1/1;position:sticky;top:0;height:100vh;height:100svh;margin-inline:calc(50% - 50vw);overflow:hidden}
+.pin canvas{display:block;width:100%;height:100%;
+  -webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,.3) calc(var(--safe,45%) - 120px),#000 var(--safe,45%));mask-image:linear-gradient(90deg,rgba(0,0,0,.3) calc(var(--safe,45%) - 120px),#000 var(--safe,45%))}
+.pin::after{content:"";position:absolute;inset:auto 0 0 0;height:18vh;background:linear-gradient(180deg,transparent,#000);pointer-events:none}
+.steps{grid-area:1/1;position:relative;z-index:2;padding-inline:var(--gutter);max-width:var(--max);margin:0 auto;width:100%}
+.step{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;gap:20px;max-width:34rem;padding-block:96px;
+  transition:opacity .7s ease,transform .9s cubic-bezier(.2,.7,.2,1);text-shadow:0 0 24px #000,0 0 6px rgba(0,0,0,.7)}
+.js .step{opacity:.2;transform:translateY(14px)}
+.js .step.is-active{opacity:1;transform:none}
+.step .count{display:flex;align-items:center;gap:12px;font-size:12.5px;color:var(--ice)}
+.step .count::after{content:"";width:48px;height:1px;background:linear-gradient(90deg,var(--ice),transparent)}
+.step .eyebrow{font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.step h2{font-weight:400;font-size:clamp(32px,3.2vw,48px);line-height:1.04;letter-spacing:-.028em;color:var(--ink);text-wrap:balance}
+.step p.body{font-size:19px;line-height:1.62;color:var(--text);max-width:31em}
+.step p.body strong{color:#fff;font-weight:500}
+.cite{font-family:var(--mono);font-style:italic;font-size:.7em;color:var(--ice);vertical-align:.25em}
+.hero h1{font-weight:400;font-size:clamp(46px,5.1vw,78px);line-height:.98;letter-spacing:-.04em;color:#fff;text-wrap:balance}
+.hero h1 em{font-style:normal;background:linear-gradient(92deg,#fff 10%,#a9dcf5 60%,#7cc8ec);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .kicker{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted)}
+.hero .kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ice);box-shadow:0 0 0 4px rgba(124,200,236,.14),0 0 14px rgba(124,200,236,.8)}
+.btn.lg{padding:12px 20px;font-size:14px}
+.step .actions{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;margin-top:8px}
+.step .actions .link{font-size:13.5px;color:#fff;border-bottom:1px solid var(--line-2);padding-bottom:2px}
+.cue{display:flex;align-items:center;gap:12px;margin-top:36px;font-size:12px;color:var(--muted)}
+.cue span{position:relative;width:1px;height:38px;background:var(--line-2);overflow:hidden}
+.cue span::after{content:"";position:absolute;left:0;top:-40%;width:1px;height:40%;background:var(--ice);animation:cue 2.2s cubic-bezier(.6,0,.2,1) infinite}
+@keyframes cue{to{top:100%}}
 
-    <section class="team wrap section" id="team" aria-labelledby="team-title">
-      <h2 id="team-title">The people behind ASTRAL.</h2>
-      <h3 class="team-group-title" id="current-members-title">Current members</h3>
-      <ul class="team-members" aria-labelledby="current-members-title">
-        <li class="member-card member-card--multi"><div class="member-link"><a class="member-card-target" href="https://colbyfagan.com" aria-label="Colby Fagan personal website"></a><img src="assets/team/colby-fagan.jpg" alt="" width="640" height="640" loading="lazy" decoding="async"><div class="member-info"><h4>Colby Fagan</h4><div class="profile-links"><a class="profile-link" href="https://colbyfagan.com">Personal website</a><a class="profile-link" href="https://www.linkedin.com/in/colby-fagan/">LinkedIn</a></div></div></div></li>
-        <li><a class="member-link" href="https://www.linkedin.com/in/shubhu-dharmadhikari/" aria-label="Shubhu Dharmadhikari on LinkedIn"><img src="assets/team/shubhu-dharmadhikari.jpg" alt="" width="640" height="640" loading="lazy" decoding="async"><div class="member-info"><h4>Shubhu Dharmadhikari</h4><span class="profile-link">LinkedIn</span></div></a></li>
-        <li><a class="member-link" href="https://www.linkedin.com/in/ethantam5133/" aria-label="Ethan Tam on LinkedIn"><img src="assets/team/ethan-tam.jpg" alt="" width="128" height="128" loading="lazy" decoding="async"><div class="member-info"><h4>Ethan Tam</h4><span class="profile-link">LinkedIn</span></div></a></li>
-      </ul>
-      <h3 class="team-group-title" id="previous-contributors-title">Previous contributors</h3>
-      <ul class="team-members" aria-labelledby="previous-contributors-title">
-        <li><a class="member-link" href="https://www.linkedin.com/in/jason-tang-b28a0318a/" aria-label="Jason Tang on LinkedIn"><img src="assets/team/jason-tang.jpg" alt="" width="400" height="400" loading="lazy" decoding="async"><div class="member-info"><h4>Jason Tang</h4><span class="profile-link">LinkedIn</span></div></a></li>
-      </ul>
+/* sections below */
+.section{position:relative;z-index:2;border-top:1px solid var(--line);padding-block:clamp(80px,10vw,140px)}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:44px}
+.section-head .eyebrow{font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.section-head h2{font-weight:400;font-size:clamp(34px,3.6vw,54px);line-height:1.02;letter-spacing:-.03em;color:#fff}
+#contact{background:radial-gradient(60% 90% at 85% 40%,rgba(40,90,140,.16),transparent 70%),radial-gradient(40% 60% at 10% 80%,rgba(244,184,86,.05),transparent 70%)}
+.contact{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:56px;align-items:end}
+.contact h2{font-weight:400;font-size:clamp(38px,4.6vw,70px);line-height:.98;letter-spacing:-.04em;color:#fff;text-wrap:balance}
+.contact .side{display:grid;gap:20px}
+.contact .mail{font-size:clamp(22px,2.2vw,30px);letter-spacing:-.02em;color:#fff;border-bottom:1px solid var(--ice);width:fit-content;padding-bottom:4px}
+.contact .mail:hover{color:var(--ice)}
+.contact .note{font-size:15px;color:var(--muted)}
+.summary-card{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);border:1px solid var(--line);background:linear-gradient(180deg,#05090d,#020406);transition:border-color .3s,transform .4s cubic-bezier(.2,.7,.2,1)}
+.summary-card:hover{border-color:rgba(124,200,236,.45);transform:translateY(-3px)}
+.summary-card .shot{display:block;overflow:hidden;border-right:1px solid var(--line);background:#02050a}
+.summary-card .shot img{display:block;width:100%;height:100%;object-fit:cover;object-position:left center;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.summary-card:hover .shot img{transform:scale(1.025)}
+.summary-card .txt{display:grid;gap:14px;align-content:center;padding:clamp(24px,3vw,40px)}
+.summary-card .meta{font-size:12px;color:var(--muted)}
+.summary-card .h{font-size:clamp(26px,2.4vw,34px);line-height:1.08;letter-spacing:-.02em;color:#fff}
+.summary-card .p{font-size:16.5px;color:var(--text)}
+.summary-card .go{font-size:13.5px;color:#fff;border-bottom:1px solid var(--ice);width:fit-content;padding-bottom:1px}
+.step.cta h2{font-size:clamp(38px,4vw,60px)}
+.step.cta .count{color:var(--amber)}.step.cta .count::after{background:linear-gradient(90deg,var(--amber),transparent)}
+.team-members{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.member{position:relative;display:flex;gap:20px;align-items:center;padding:20px;border:1px solid var(--line);background:linear-gradient(180deg,#05090d,#020406);transition:border-color .3s}
+.member:hover{border-color:rgba(124,200,236,.45)}
+.member img{width:88px;height:100px;object-fit:cover;filter:grayscale(1) contrast(1.05);flex:none;transition:filter .4s}
+.member:hover img{filter:grayscale(.2)}
+.member-target{position:absolute;inset:0;z-index:1}
+.member h4{margin:0;font-weight:400;font-size:21px;color:#fff;line-height:1.25}
+.team-group{margin:0 0 18px;font-size:12.5px;letter-spacing:.06em;color:var(--muted)}
+.team-members+.team-group{margin-top:40px}
+.profile-links{position:relative;z-index:2;display:flex;gap:14px;margin-top:6px;font-size:14px;color:var(--muted)}
+.member:not(.member--multi) .profile-links{z-index:0}
+.profile-link:hover{color:var(--ice)}
+.funders{display:flex;flex-wrap:wrap;align-items:baseline;gap:14px 48px;margin-top:44px;padding-top:30px;border-top:1px solid var(--line)}
+.funders .lbl{font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-right:auto}
+.funders a{font-size:22px;letter-spacing:-.01em;color:#fff;border-bottom:1px solid transparent;transition:border-color .2s}
+.funders a:hover{border-color:var(--ice)}
+.site-footer{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding-block:36px 48px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.site-footer .brand{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:0;border:0}
+.site-footer .logo{width:124px}
+.site-footer .brand-expansion{display:block;font-size:11.5px}
+
+@media (max-width:1320px){.step{max-width:30rem}.step p.body{font-size:18px}}
+@media (max-width:1100px){.step{max-width:26rem}.step p.body{font-size:17px}.hero h1{font-size:clamp(40px,4.8vw,52px)}.step h2{font-size:32px}}
+@media (max-width:900px){
+  .site-header{position:sticky;height:auto}.brand{border-right:0;padding:16px 20px}
+  .site-header nav{display:none}.site-header nav.right{display:flex;padding:0 20px}.site-header nav.right a:not(.btn){display:none}
+  .scrolly{grid-template-rows:auto auto}
+  .pin{grid-area:1/1;top:0;height:56svh;margin-inline:calc(50% - 50vw);z-index:3;background:#000}
+  .pin canvas{-webkit-mask-image:none;mask-image:none}
+  .pin::after{height:9vh}
+  .steps{grid-area:2/1;padding-inline:20px}
+  .step{min-height:68svh;justify-content:flex-start;padding-block:36px 24px;max-width:none;text-shadow:none}
+  .step p.body{font-size:18px}.step h2{font-size:clamp(30px,8vw,40px)}
+  .hero h1{font-size:clamp(40px,11vw,56px)}
+  .cue{display:none}
+  .contact,.summary-card,.team-members{grid-template-columns:minmax(0,1fr)}
+  .summary-card .shot{border-right:0;border-bottom:1px solid var(--line);aspect-ratio:16/7}
+  .site-footer{flex-direction:column;align-items:flex-start}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.step{transition:none;transform:none}.cue span::after{animation:none}.summary-card,.summary-card .shot img,.member img{transition:none}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#top">Skip to content</a>
+<header class="site-header">
+  <a class="brand" href="#top" aria-label="ASTRAL home"><svg class="logo" viewBox="0 0 312 64" role="img" aria-label="ASTRAL"><g transform="translate(1.46,10.17) scale(0.704)"><circle class="logo-apex" cx="32" cy="6" r="3.4"/><g class="logo-dots"><circle cx="27" cy="16" r="3.4"/><circle cx="37" cy="16" r="3.4"/><circle cx="22" cy="26" r="3.4"/><circle cx="42" cy="26" r="3.4"/><circle cx="17" cy="36" r="3.4"/><circle cx="27" cy="36" r="3.4"/><circle cx="37" cy="36" r="3.4"/><circle cx="47" cy="36" r="3.4"/><circle cx="12" cy="46" r="3.4"/><circle cx="52" cy="46" r="3.4"/><circle cx="7" cy="56" r="3.4"/><circle cx="57" cy="56" r="3.4"/></g></g><g class="logo-type"><g transform="translate(58,9)"><path d="M35 6C30 2 25 1 19 1 9 1 3 6 3 13c0 7 5 10 15 12l4 1c7 2 10 4 10 8 0 5-4 7-11 7-7 0-12-3-17-7l-3 5c5 5 12 7 20 7 10 0 17-5 17-12 0-8-5-11-15-14l-5-1c-7-2-9-3-9-7 0-4 4-6 10-6 5 0 10 2 14 5Z" transform="translate(0,2.11) scale(1,.889)"/></g><g transform="translate(111,9)"><path d="M0 3h40v5H23v35h-6V8H0Z"/></g><g transform="translate(164,9)"><path fill-rule="evenodd" d="M3 3h18c11 0 17 5 17 13 0 6-4 11-11 13l13 14h-8L19 29H9v14H3Zm6 5v16h12c7 0 11-3 11-8s-4-8-11-8Z"/></g><g transform="translate(217,9)"><path d="M1 43 18 3h5l17 40h-6L20.5 10 7 43Z M10 29h21v5H10Z"/></g><g transform="translate(270,9)"><path d="M3 3h6v35h28v5H3Z"/></g></g></svg></a>
+  <nav class="i"><a href="#top">Overview</a><a href="summary.html">Summary</a><a href="#team">Team</a></nav>
+  <nav class="i right"><a href="#contact">Collaborate</a><a class="btn" href="demo/">Try the demo</a></nav>
+</header>
+<main id="top">
+  <div class="scrolly">
+    <div class="pin">
+      <canvas role="img" aria-label="Dotted visual that changes as you scroll: a constellation in the shape of the ASTRAL mark, a DNA double helix, a wall of chat transcripts, five transcripts flagged while the rest fade, and a list ranked priority 1 to 3."></canvas>
+    </div>
+    <div class="steps">
+    <section class="step hero is-active" data-stage="0" aria-label="Introduction">
+      <p class="kicker i">Cambridge Boston Alignment Initiative (CBAI) AI×Biosecurity Fellowship</p>
+      <h1><em>Biological misuse</em> detection for AI chat logs</h1>
+      <p class="body">ASTRAL scans an organization’s own AI transcripts for biological misuse, returning a risk score and threat characterization that helps any team, experts and nonexperts alike, cut through log volume and check what may be a real threat.</p>
+      <div class="actions"><a class="btn solid lg i" href="demo/">Try the demo →</a><a class="btn lg i" href="#contact">Collaborate with us</a></div>
+      <p class="cue i"><span></span>Scroll to see how it works</p>
     </section>
+    <section class="step" data-stage="1">
+      <p class="count i">02 / 05</p>
+      <p class="eyebrow i">The gap</p>
+      <h2>AI bio-capabilities are advancing</h2>
+      <p class="body">AI already outperforms expert virologists on wet-lab troubleshooting in test settings <span class="cite">[5]</span>, and leading open-weight models trail closed frontier models by about eight months in biological capabilities <span class="cite">[6]</span>. <strong>If this trend continues, today’s frontier biological capabilities could reach unmonitored platforms in less than a year.</strong></p>
+    </section>
+    <section class="step" data-stage="2">
+      <p class="count i">03 / 05</p>
+      <p class="eyebrow i">What it is</p>
+      <h2>ASTRAL reads whole conversations</h2>
+      <p class="body">Intent accumulates across turns (persistence past refusals, session-hopping, incremental progress) and rarely sits in one flaggable message. ASTRAL runs always-on against incoming logs or retrospectively over historical ones.</p>
+    </section>
+    <section class="step" data-stage="3">
+      <p class="count i">04 / 05</p>
+      <p class="eyebrow i">How it works</p>
+      <h2>Most logs are discarded cheaply</h2>
+      <p class="body">A keyword filter and an embedding filter discard the majority of logs. Only the small remainder reaches the LLM scanner, which classifies each transcript against the variable table and writes the risk report.</p>
+    </section>
+    <section class="step" data-stage="4">
+      <p class="count i">05 / 05</p>
+      <p class="eyebrow i">For human review</p>
+      <h2>Each flagged case gets a review priority</h2>
+      <p class="body">ASTRAL distills each flagged conversation into a structured risk report for a human reviewer: apparent actor and goal, the threat pathway implicated, and a review priority.</p>
+    </section>
+    <section class="step cta" data-stage="4" aria-labelledby="demo-title">
+      <p class="count i">Next</p>
+      <h2 id="demo-title">See it in action</h2>
+      <p class="body">Try ASTRAL in the demo.</p>
+      <div class="actions"><a class="btn solid lg i" href="demo/">Try the demo →</a><a class="link i" href="summary.html">Read the project summary</a></div>
+    </section>
+    </div>
+  </div>
 
-    <aside class="support wrap" aria-label="Project support">
-      <p>Supported by</p>
-      <a href="https://www.cbai.ai/">Cambridge Boston<br>Alignment Initiative</a>
-      <a href="https://coefficientgiving.org/">Coefficient Giving</a>
-    </aside>
+  <div class="wrap">
+  <section class="section" id="contact" aria-labelledby="contact-title">
+    <div class="contact">
+      <div><p class="eyebrow i" style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px">Collaborate</p><h2 id="contact-title">Seeking a real-world validation partner</h2></div>
+      <div class="side"><p>We’re seeking a log-holding collaborator to validate ASTRAL in a real deployment. We’ll adapt ASTRAL to your platform and work with your team to strengthen bio-misuse detection.</p><a class="mail" href="mailto:ASTRAL@detection.bio">ASTRAL@detection.bio</a><p class="note">Interested in collaborating, or want to learn more? Get in touch.</p></div>
+    </div>
+  </section>
 
-<section id="sources" class="sources"><h2 data-source="16">Sources</h2><ol>
-<li data-source="17">Williams, Righetti, Rosenberg, … Tetlock, &quot;Forecasting LLM-Enabled Biorisk and the Efficacy of Safeguards,&quot; FRI / SecureBio / GovAI (2025, rev. Apr 2026).</li>
-<li data-source="18">Anthropic, &quot;Constitutional Classifiers&quot; (arXiv:2501.18837, 2025); OpenAI, GPT-5 System Card (2025).</li>
-<li data-source="19">Anthropic, &quot;Detecting and Countering Misuse of AI&quot; (Aug 2025).</li>
-<li data-source="20">Feldman, Feldman &amp; Antón, &quot;Know Your Scientist: KYC as Biosecurity Infrastructure,&quot; arXiv:2602.06172 (Feb 2026).</li>
-<li data-source="21">Götting et al., &quot;Virology Capabilities Test (VCT),&quot; arXiv:2504.16137 (2025).</li>
-<li data-source="22">Shiv Muthupandiyan, &quot;<a href="https://securebio.org/blog/kimi-k3-biology-capabilities-assessment/">Kimi K3 Biology Capabilities Assessment</a>,&quot; SecureBio (August 7, 2026).</li>
-<li data-source="23">Hassabis, Altman, Amodei, Wang, Suleyman et al., open letter to Congress on nucleic acid synthesis screening, screendna.org (June 2026).</li>
-<li data-source="24">VET Artificial Intelligence Act, S.2615; AI Risk Evaluation Act, S.2938, 119th Congress.</li>
-<li data-source="25">Meridian Labs, &quot;Inspect Scout,&quot; github.com/meridianlabs-ai/inspect_scout.</li>
-<li data-source="26">Marshall et al., &quot;BioTIER: A Refusal Benchmark for Targeted Biological Risk Mitigation,&quot; arXiv:2607.14479 (2026).</li>
-<li data-source="27">Agrawal et al., &quot;GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning,&quot; ICLR 2026, arXiv:2507.19457.</li>
-<li data-source="28">Anthropic, &quot;LLM ATT&amp;CK Navigator&quot; (introducing the ARiES actor-risk score), red.anthropic.com (June 2026).</li>
-</ol></section>
-</main><footer><a class="footer-wordmark" href="#overview" aria-label="ASTRAL home"><img src="assets/astral-lockup-dark.svg" width="142" height="29" alt="ASTRAL"><span class="brand-expansion">Activity Scanner Tool for Risk Assessment of Logs</span></a><a href="#overview">Back to top ↑</a></footer></div></body></html>
+  <section class="section" id="read-more" aria-labelledby="read-title">
+    <div class="section-head"><div><p class="eyebrow i">Project summary</p><h2 id="read-title">Read more</h2></div></div>
+    <a class="summary-card" href="summary.html">
+      <span class="shot"><img src="assets/summary-preview.webp" width="1200" height="430" alt="Preview of the visual overview on the project summary page" loading="lazy" decoding="async"></span>
+      <span class="txt">
+        <span class="meta i">Summary · one-page PDF</span>
+        <span class="h">ASTRAL project summary</span>
+        <span class="p">The gap ASTRAL addresses, how it works, who runs it, and sources, with a visual overview. The one-page PDF can be downloaded there.</span>
+        <span class="go i">Read the summary →</span>
+      </span>
+    </a>
+  </section>
+
+  <section class="section" id="team" aria-labelledby="team-title">
+    <div class="section-head"><div><p class="eyebrow i">Team</p><h2 id="team-title">The people behind ASTRAL</h2></div></div>
+    <h3 class="team-group i" id="current-members-title">Current members</h3>
+    <ul class="team-members" aria-labelledby="current-members-title">
+      <li class="member member--multi"><a class="member-target" href="https://colbyfagan.com" aria-label="Colby Fagan personal website"></a><img src="assets/team/colby-fagan.jpg" alt="" width="640" height="640" loading="lazy" decoding="async"><div class="member-info"><h4>Colby Fagan</h4><div class="profile-links"><a class="profile-link" href="https://colbyfagan.com">Personal website</a><a class="profile-link" href="https://www.linkedin.com/in/colby-fagan/">LinkedIn</a></div></div></li>
+      <li class="member"><a class="member-target" href="https://www.linkedin.com/in/shubhu-dharmadhikari/" aria-label="Shubhu Dharmadhikari on LinkedIn"></a><img src="assets/team/shubhu-dharmadhikari.jpg" alt="" width="640" height="640" loading="lazy" decoding="async"><div class="member-info"><h4>Shubhu Dharmadhikari</h4><div class="profile-links"><span class="profile-link">LinkedIn</span></div></div></li>
+      <li class="member"><a class="member-target" href="https://www.linkedin.com/in/ethantam5133/" aria-label="Ethan Tam on LinkedIn"></a><img src="assets/team/ethan-tam.jpg" alt="" width="128" height="128" loading="lazy" decoding="async"><div class="member-info"><h4>Ethan Tam</h4><div class="profile-links"><span class="profile-link">LinkedIn</span></div></div></li>
+    </ul>
+    <h3 class="team-group i" id="previous-contributors-title">Previous contributors</h3>
+    <ul class="team-members" aria-labelledby="previous-contributors-title">
+      <li class="member"><a class="member-target" href="https://www.linkedin.com/in/jason-tang-b28a0318a/" aria-label="Jason Tang on LinkedIn"></a><img src="assets/team/jason-tang.jpg" alt="" width="400" height="400" loading="lazy" decoding="async"><div class="member-info"><h4>Jason Tang</h4><div class="profile-links"><span class="profile-link">LinkedIn</span></div></div></li>
+    </ul>
+    <aside class="funders" aria-label="Project support"><p class="lbl i">Supported by</p><a href="https://www.cbai.ai/">Cambridge Boston Alignment Initiative</a><a href="https://coefficientgiving.org/">Coefficient Giving</a></aside>
+  </section>
+
+  <footer class="site-footer">
+    <a class="brand" href="#top"><svg class="logo" viewBox="0 0 312 64" role="img" aria-label="ASTRAL"><g transform="translate(1.46,10.17) scale(0.704)"><circle class="logo-apex" cx="32" cy="6" r="3.4"/><g class="logo-dots"><circle cx="27" cy="16" r="3.4"/><circle cx="37" cy="16" r="3.4"/><circle cx="22" cy="26" r="3.4"/><circle cx="42" cy="26" r="3.4"/><circle cx="17" cy="36" r="3.4"/><circle cx="27" cy="36" r="3.4"/><circle cx="37" cy="36" r="3.4"/><circle cx="47" cy="36" r="3.4"/><circle cx="12" cy="46" r="3.4"/><circle cx="52" cy="46" r="3.4"/><circle cx="7" cy="56" r="3.4"/><circle cx="57" cy="56" r="3.4"/></g></g><g class="logo-type"><g transform="translate(58,9)"><path d="M35 6C30 2 25 1 19 1 9 1 3 6 3 13c0 7 5 10 15 12l4 1c7 2 10 4 10 8 0 5-4 7-11 7-7 0-12-3-17-7l-3 5c5 5 12 7 20 7 10 0 17-5 17-12 0-8-5-11-15-14l-5-1c-7-2-9-3-9-7 0-4 4-6 10-6 5 0 10 2 14 5Z" transform="translate(0,2.11) scale(1,.889)"/></g><g transform="translate(111,9)"><path d="M0 3h40v5H23v35h-6V8H0Z"/></g><g transform="translate(164,9)"><path fill-rule="evenodd" d="M3 3h18c11 0 17 5 17 13 0 6-4 11-11 13l13 14h-8L19 29H9v14H3Zm6 5v16h12c7 0 11-3 11-8s-4-8-11-8Z"/></g><g transform="translate(217,9)"><path d="M1 43 18 3h5l17 40h-6L20.5 10 7 43Z M10 29h21v5H10Z"/></g><g transform="translate(270,9)"><path d="M3 3h6v35h28v5H3Z"/></g></g></svg><span class="brand-expansion">Activity Scanner Tool for Risk Assessment of Logs</span></a>
+    <a href="#top">Back to top ↑</a>
+  </footer>
+  </div>
+</main>
+<script src="scroll-visual.js?v=4d0181a77086"></script>
+<script>
+(() => {
+  const canvas = document.querySelector('.pin canvas');
+  const steps = [...document.querySelectorAll('.step')];
+  const narrow = matchMedia('(max-width: 900px)');
+  // The free area for the visual: from just right of the text column to the page gutter.
+  const safe = () => {
+    const c = canvas.getBoundingClientRect();
+    if (narrow.matches) return { left: 0, right: c.width };
+    const gutter = parseFloat(getComputedStyle(steps[0].parentElement).paddingRight) || 32;
+    const left = steps[0].getBoundingClientRect().right - c.left + Math.max(32, c.width * .03);
+    canvas.parentElement.style.setProperty('--safe', Math.round(left) + 'px');
+    return { left, right: c.width - gutter };
+  };
+  const scene = AstralScroll.create(canvas, { safe });
+  let current = 0;
+  const stageOf = k => +steps[k].dataset.stage;
+  const set = k => {
+    if (k === current) return;
+    current = k; scene.goTo(stageOf(k));
+    steps.forEach((s, j) => s.classList.toggle('is-active', j === k));
+  };
+  const pick = () => {
+    const line = innerHeight * (narrow.matches ? .78 : .55);
+    let k = 0;
+    steps.forEach((s, j) => { if (s.getBoundingClientRect().top < line) k = j; });
+    set(k);
+  };
+  addEventListener('scroll', pick, { passive: true }); addEventListener('resize', pick); pick();
+})();
+</script>
+</body>
+</html>

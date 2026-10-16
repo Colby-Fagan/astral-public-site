@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000000">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://astral.detection.bio/summary.html">
+<meta name="description" content="The gap ASTRAL addresses, how it works, who runs it, and sources, with a visual overview and the one-page PDF.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ASTRAL">
+<meta property="og:title" content="ASTRAL — Project summary">
+<meta property="og:description" content="The gap ASTRAL addresses, how it works, who runs it, and sources, with a visual overview and the one-page PDF.">
+<meta property="og:url" content="https://astral.detection.bio/summary.html">
+<meta property="og:image" content="https://astral.detection.bio/assets/social-preview.png?v=d7281f90005f">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ASTRAL: biological misuse detection for AI chat logs, beside the ASTRAL mark drawn as a constellation">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://astral.detection.bio/assets/social-preview.png?v=d7281f90005f">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<title>ASTRAL — Project summary</title>
+<link rel="stylesheet" href="fonts.css?v=89ebba103f18">
+<link rel="stylesheet" href="figures.css?v=d485fb418f21">
+<style>
+/* Layout: a reading page in the new site's style. Title and download first, then the redrawn visual overview,
+   then the four sections as number-and-heading on the left with prose on the right, then sources. */
+:root{
+  --bg:#000; --ink:#f4f7fa; --text:#c7ced5; --muted:#8a939c; --faint:#59626b;
+  --line:rgba(255,255,255,.12); --line-2:rgba(255,255,255,.2);
+  --ice:#7cc8ec; --ice-deep:#0e2a36; --amber:#f4b856; --red:#f24b50;
+  --sans:'Host Grotesk','Helvetica Neue',Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  --gutter:clamp(20px,3vw,40px); --max:1240px;
+  color-scheme:dark;
+  --fig-font:var(--sans); --fig-mono:var(--mono);
+  --fig-surface:linear-gradient(180deg,#071018,#03070b); --fig-surface-2:rgba(124,200,236,.03);
+  --fig-border:rgba(255,255,255,.12); --fig-border-strong:rgba(124,200,236,.45);
+  --fig-ink:#f4f7fa; --fig-muted:#8a939c; --fig-accent:#7cc8ec;
+  --fig-line:#5f7080; --fig-dot:#9fb6c8; --fig-cell:#11202c; --fig-bar:#1a2a38; --fig-bar-strong:#3c566c;
+  --fig-meter:linear-gradient(90deg,#7cc8ec,#f4b856 60%,#f24b50); --fig-radius:4px; --fig-strong:500;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:18.5px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,p{margin:0}
+.i{font-family:var(--mono);font-style:italic;font-weight:400;letter-spacing:-.02em}
+.skip-link{position:absolute;left:12px;top:-80px;z-index:40;background:#fff;color:#000;padding:10px 14px;font-size:14px}.skip-link:focus{top:12px}
+a:focus-visible{outline:2px solid var(--ice);outline-offset:3px}
+strong{color:#fff;font-weight:500}
+.wrap{max-width:var(--max);margin:0 auto;padding-inline:var(--gutter)}
+.site-header{position:sticky;top:0;z-index:20;height:68px;display:flex;align-items:stretch;border-bottom:1px solid var(--line);background:rgba(0,0,0,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.brand{display:flex;align-items:center;padding:0 var(--gutter);border-right:1px solid var(--line)}
+.logo{width:138px;height:auto;display:block}.logo-apex{fill:var(--ice)}.logo-dots circle,.logo-type{fill:#fff}
+.site-header nav{display:flex;align-items:center;gap:26px;padding:0 26px;font-size:13.5px;color:#fff}
+.site-header nav.right{margin-left:auto;padding-right:var(--gutter)}
+.site-header nav a:not(.btn){opacity:.82}.site-header nav a:not(.btn):hover,.site-header nav a[aria-current]{opacity:1}
+.site-header nav a[aria-current]{border-bottom:1px solid var(--ice)}
+.btn{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--ice);padding:8px 16px;font-size:13.5px;color:#fff;background:rgba(14,42,54,.25);transition:background .2s}
+.btn:hover{background:var(--ice-deep)}
+.btn.solid{background:#fff;color:#000;border-color:#fff}.btn.solid:hover{background:var(--ice);border-color:var(--ice)}
+.btn.lg{padding:12px 20px;font-size:14px}
+
+.intro{position:relative;padding-block:clamp(64px,8vw,112px) 48px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:48px;align-items:end}
+.intro::before{content:"";position:absolute;inset:0 calc(50% - 50vw);z-index:-1;background:radial-gradient(50% 80% at 85% 30%,rgba(40,90,140,.22),transparent 70%),radial-gradient(30% 50% at 10% 90%,rgba(242,75,80,.06),transparent 70%)}
+.eyebrow{font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.intro h1{margin-top:16px;font-weight:400;font-size:clamp(40px,5vw,72px);line-height:.98;letter-spacing:-.04em;color:#fff;text-wrap:balance}
+.intro .tldr{margin-top:24px;font-size:20px;line-height:1.55;color:var(--text);max-width:36em}
+.intro .side{display:grid;gap:14px;justify-items:start;padding:24px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(124,200,236,.06),rgba(0,0,0,0))}
+.intro .side p{font-size:15px;color:var(--muted)}
+.intro .kicker{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted)}
+.intro .kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ice);box-shadow:0 0 0 4px rgba(124,200,236,.14),0 0 14px rgba(124,200,236,.8)}
+
+.overview{margin:0;padding:28px;border:1px solid var(--line);background:radial-gradient(80% 120% at 50% 0%,rgba(40,90,140,.14),transparent 60%),#02050a;position:relative}
+.overview::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(rgba(124,200,236,.16) 1px,transparent 1.2px);background-size:18px 18px;-webkit-mask-image:linear-gradient(180deg,#000,transparent 70%);mask-image:linear-gradient(180deg,#000,transparent 70%);opacity:.5}
+.overview figcaption{position:relative;display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:28px}
+.overview figcaption h2{font-weight:400;font-size:24px;letter-spacing:-.02em;color:#fff}
+.overview figcaption span{font-size:12.5px;color:var(--muted)}
+.overview .ov{position:relative}
+.ov-node{box-shadow:0 0 0 1px rgba(255,255,255,.02),0 18px 40px -24px rgba(0,0,0,.9)}
+.ov-scanner{background:linear-gradient(180deg,rgba(124,200,236,.06),rgba(124,200,236,.01))!important;box-shadow:0 0 40px -18px rgba(124,200,236,.45)}
+.ov-grid i.on{box-shadow:0 0 8px rgba(124,200,236,.6)}
+.ov-report{border-color:rgba(242,75,80,.35)!important;box-shadow:0 0 44px -20px rgba(242,75,80,.45)}
+.ov-report .ov-note{color:#ff8a8c!important}
+.ov-human .ov-person{stroke:#ff8a8c}
+.ov-down::before{background:#f24b50}.ov-down::after{border-color:#f24b50}
+
+.sec{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.1fr);gap:48px;padding-block:clamp(56px,7vw,96px);border-top:1px solid var(--line)}
+.sec:first-of-type{margin-top:clamp(56px,7vw,96px)}
+.sec-head{position:sticky;top:96px;align-self:start;display:grid;gap:12px}
+.sec-head .num{display:flex;align-items:center;gap:12px;font-size:12.5px;color:var(--ice)}
+.sec-head .num::after{content:"";width:48px;height:1px;background:linear-gradient(90deg,var(--ice),transparent)}
+.sec-head h2{font-weight:400;font-size:clamp(28px,2.8vw,40px);line-height:1.06;letter-spacing:-.025em;color:#fff;text-wrap:balance}
+.prose{display:grid;gap:20px;max-width:40em;min-width:0}
+.prose p{color:var(--text)}
+.cite{font-family:var(--mono);font-style:italic;font-size:.7em;color:var(--ice);vertical-align:.25em}
+.components{list-style:none;margin:6px 0 0;padding:0;display:grid;counter-reset:c}
+.components li{counter-increment:c;position:relative;padding:20px 0 20px 44px;border-top:1px solid var(--line)}
+.components li:last-child{border-bottom:1px solid var(--line)}
+.components li::before{content:counter(c,decimal-leading-zero);position:absolute;left:0;top:25px;font-family:var(--mono);font-style:italic;font-size:12.5px;color:var(--ice)}
+.sources{padding-block:56px 40px;border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.1fr);gap:48px}
+.sources ol{margin:0;padding-left:1.6em;font-size:15px;line-height:1.55;color:var(--muted);display:grid;gap:10px}
+.sources li{padding-left:6px;overflow-wrap:anywhere}
+.sources li::marker{font-family:var(--mono);font-size:12px;color:var(--ice)}
+.sources li:target{color:#fff}
+.sources a{color:#c7ced5;border-bottom:1px solid rgba(124,200,236,.5)}.sources a:hover{color:#fff}
+.end{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;justify-content:space-between;padding:32px;margin-block:24px 64px;border:1px solid var(--line);background:linear-gradient(90deg,rgba(124,200,236,.07),rgba(242,75,80,.04))}
+.end h2{font-weight:400;font-size:clamp(24px,2.4vw,32px);letter-spacing:-.02em;color:#fff}
+.end .acts{display:flex;flex-wrap:wrap;gap:12px}
+.site-footer{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding-block:32px 48px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.site-footer .brand{flex-direction:column;align-items:flex-start;gap:8px;padding:0;border:0}
+.site-footer .logo{width:124px}
+@media (max-width:900px){
+  .site-header nav{display:none}.site-header nav.right{display:flex;padding:0 20px}.site-header nav.right a:not(.btn){display:none}.brand{border-right:0}
+  .intro,.sec,.sources{grid-template-columns:minmax(0,1fr);gap:24px}
+  .sec-head{position:static}
+  .overview{padding:18px}
+  .site-footer{flex-direction:column;align-items:flex-start}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#title">Skip to content</a>
+<header class="site-header">
+  <a class="brand" href="./" aria-label="ASTRAL home"><svg class="logo" viewBox="0 0 312 64" role="img" aria-label="ASTRAL"><g transform="translate(1.46,10.17) scale(0.704)"><circle class="logo-apex" cx="32" cy="6" r="3.4"/><g class="logo-dots"><circle cx="27" cy="16" r="3.4"/><circle cx="37" cy="16" r="3.4"/><circle cx="22" cy="26" r="3.4"/><circle cx="42" cy="26" r="3.4"/><circle cx="17" cy="36" r="3.4"/><circle cx="27" cy="36" r="3.4"/><circle cx="37" cy="36" r="3.4"/><circle cx="47" cy="36" r="3.4"/><circle cx="12" cy="46" r="3.4"/><circle cx="52" cy="46" r="3.4"/><circle cx="7" cy="56" r="3.4"/><circle cx="57" cy="56" r="3.4"/></g></g><g class="logo-type"><g transform="translate(58,9)"><path d="M35 6C30 2 25 1 19 1 9 1 3 6 3 13c0 7 5 10 15 12l4 1c7 2 10 4 10 8 0 5-4 7-11 7-7 0-12-3-17-7l-3 5c5 5 12 7 20 7 10 0 17-5 17-12 0-8-5-11-15-14l-5-1c-7-2-9-3-9-7 0-4 4-6 10-6 5 0 10 2 14 5Z" transform="translate(0,2.11) scale(1,.889)"/></g><g transform="translate(111,9)"><path d="M0 3h40v5H23v35h-6V8H0Z"/></g><g transform="translate(164,9)"><path fill-rule="evenodd" d="M3 3h18c11 0 17 5 17 13 0 6-4 11-11 13l13 14h-8L19 29H9v14H3Zm6 5v16h12c7 0 11-3 11-8s-4-8-11-8Z"/></g><g transform="translate(217,9)"><path d="M1 43 18 3h5l17 40h-6L20.5 10 7 43Z M10 29h21v5H10Z"/></g><g transform="translate(270,9)"><path d="M3 3h6v35h28v5H3Z"/></g></g></svg></a>
+  <nav class="i"><a href="./">Overview</a><a href="summary.html" aria-current="page">Summary</a><a href="./#team">Team</a></nav>
+  <nav class="i right"><a href="./#contact">Collaborate</a><a class="btn" href="demo/">Try the demo</a></nav>
+</header>
+<main class="wrap">
+  <section class="intro" aria-labelledby="title">
+    <div>
+      <p class="eyebrow i">Project summary</p>
+      <h1 id="title">Biological misuse detection for AI chat logs</h1>
+      <p class="tldr">ASTRAL scans an organization’s own AI transcripts for biological misuse, returning a risk score and threat characterization that helps any team, experts and nonexperts alike, cut through log volume and check what may be a real threat.</p>
+    </div>
+    <aside class="side" aria-label="Download">
+      <p class="kicker i">One-page overview</p>
+      <a class="btn solid lg i" href="ASTRAL-project-overview.pdf?v=16b8cfda8584" download>Download the PDF ↓</a>
+      <p>The same summary as a single page, for sharing or printing.</p>
+    </aside>
+  </section>
+
+  <figure class="overview" aria-labelledby="ov-title">
+    <figcaption><h2 id="ov-title">Visual overview</h2><span class="i">From scenario to human review</span></figcaption>
+    <div class="ov" role="img" aria-label="The variable table defines misuse scenarios and generates synthetic transcripts. At deployment, real transcripts held by the deployer of ASTRAL replace the synthetic input. The multistage scanner selects concerning logs and characterizes each case using the variable table. Each triaged case receives a report containing its risk score, evidence and rationale, which sets priority for human review.">
+  <div class="ov-node ov-table">
+    <h3>Variable table</h3><p>Defines misuse scenarios</p>
+    <div class="ov-grid" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i></div>
+  </div>
+  <div class="ov-arrow ov-a1" aria-hidden="true"></div>
+  <div class="ov-node ov-synth">
+    <h3>Synthetic transcripts</h3><p>Generated from the table</p>
+    <div class="ov-bars" aria-hidden="true"><i></i><i></i><i></i></div>
+  </div>
+  <div class="ov-arrow ov-a2" aria-hidden="true"></div>
+  <div class="ov-scanner">
+    <span class="ov-tag">Multistage scanner</span>
+    <div class="ov-steps">
+      <div class="ov-node ov-step"><h3><b>1</b> Select</h3>
+        <svg class="ov-icon" viewBox="0 0 80 40" aria-hidden="true"><path d="M8 6h64M18 15h44M28 24h24M40 30v8"/></svg>
+        <p>Pick out the most concerning logs</p></div>
+      <div class="ov-arrow ov-a3" aria-hidden="true"></div>
+      <div class="ov-node ov-step"><h3><b>2</b> Characterize</h3>
+        <svg class="ov-icon" viewBox="0 0 80 40" aria-hidden="true"><path d="M4 7h42M4 20h42M4 33h42"/><rect x="54" y="3" width="22" height="8" rx="2"/><rect class="hl" x="54" y="16" width="22" height="8" rx="2"/><rect x="54" y="29" width="22" height="8" rx="2"/></svg>
+        <p>Apply the variable table to each case</p></div>
+    </div>
+  </div>
+  <div class="ov-arrow ov-a4" aria-hidden="true"></div>
+  <div class="ov-node ov-report">
+    <h3>Case report</h3><p>One per triaged case</p>
+    <div class="ov-report-body" aria-hidden="true">
+      <div><span class="ov-k">Risk score</span><i class="ov-meter"></i><span class="ov-scale"><small>Lower</small><small>Higher</small></span></div>
+      <div><span class="ov-k">Evidence &amp; rationale</span><i class="ov-line"></i><i class="ov-line s"></i><i class="ov-line"></i></div>
+    </div>
+    <p class="ov-note">Sets review priority</p>
+  </div>
+  <div class="ov-up" aria-hidden="true"><span>Replaces synthetic input</span></div>
+  <div class="ov-node ov-real"><span class="ov-tag">At deployment</span><h3>Real transcripts</h3><p>Held by deployer of ASTRAL</p></div>
+  <div class="ov-down" aria-hidden="true"></div>
+  <div class="ov-node ov-human">
+    <svg class="ov-person" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+    <div><h3>Human review</h3><p>Highest-priority cases first</p></div>
+  </div>
+</div>
+  </figure>
+
+  <section class="sec" aria-labelledby="s01">
+    <header class="sec-head"><p class="num i">01</p><h2 id="s01">The gap</h2></header>
+    <div class="prose">
+<p>A frontier provider&#x27;s safeguards are bound to its own model and API. They do not follow when a motivated actor moves to an open-weight model and runs it on third-party inference that does little or no monitoring <a class="cite" href="#src-1">[1]</a>. Today, providers handle biological-misuse risk mostly through inline classifiers that screen individual responses <a class="cite" href="#src-2">[2]</a>; session-level review of who is doing what across a conversation happens selectively, often only during active investigations <a class="cite" href="#src-3">[3]</a>. Non-frontier providers have limited or no standardized equivalent, and experts specifically warn that these surfaces will &quot;not attract the attention of AI companies&quot; <a class="cite" href="#src-1">[1]</a>. The organizations holding those logs (inference providers, AI-scientist platforms, enterprise deployers) rarely have a dedicated biosecurity function.</p>
+<p>AI bio-capabilities are advancing. AI already outperforms expert virologists on wet-lab troubleshooting in test settings <a class="cite" href="#src-5">[5]</a>, and leading open-weight models trail closed frontier models by about eight months in biological capabilities <a class="cite" href="#src-6">[6]</a>. <strong>If this trend continues, today&#x27;s frontier biological capabilities could reach unmonitored platforms in less than a year.</strong> The safeguards that exist are mostly pre-deployment and first-party, built inside frontier companies for their own models. <strong>ASTRAL is the post-deployment complement.</strong></p>
+    </div>
+  </section>
+  <section class="sec" aria-labelledby="s02">
+    <header class="sec-head"><p class="num i">02</p><h2 id="s02">What it is</h2></header>
+    <div class="prose">
+<p>ASTRAL reads multi-turn conversations, because intent accumulates across turns (persistence past refusals, session-hopping, incremental progress) and rarely sits in one flaggable message. It distills each flagged conversation into a structured risk report for a human reviewer: apparent actor and goal, the threat pathway implicated, and a review priority. It runs always-on against incoming logs or retrospectively over historical ones, and it is built on Inspect Scout <a class="cite" href="#src-9">[9]</a>. </p>
+    </div>
+  </section>
+  <section class="sec" aria-labelledby="s03">
+    <header class="sec-head"><p class="num i">03</p><h2 id="s03">How it works</h2></header>
+    <div class="prose">
+<p>Three pieces, built with input from biosecurity expert affiliates of organizations like SecureBio, OpenAI, and MIT. </p><ol class="components"><li><strong>Variable table: </strong>the ground truth. It breaks an AI bio-misuse scenario into nine variables across four categories (the actor, the action, the agent, the target), drawing on the threat-modeling literature and SecureBio&#x27;s BioTIER content sets <a class="cite" href="#src-10">[10]</a>. The same table defines both the scenarios we generate and the rubric the scanner scores against, so input and output can be compared directly and the scanner improved on the difference.</li>
+<li><strong>Synthetic transcript pipeline</strong>: built on Inspect AI, the pipeline has one model role-play a benign or malicious actor against an assistant model, producing transcripts that range from routine biology questions to deliberate misuse attempts. Models, scenarios, and actor profiles swap independently. </li>
+<li><strong>Multilayer scanner:</strong> keeps cost down. A keyword filter and an embedding filter discard the majority of logs cheaply. Only the small remainder reaches the LLM scanner, which classifies each transcript against the variable table and writes the risk report. </li>
+</ol>
+    </div>
+  </section>
+  <section class="sec" aria-labelledby="s04">
+    <header class="sec-head"><p class="num i">04</p><h2 id="s04">Why it’s different, and who runs it</h2></header>
+    <div class="prose">
+<p>Frontier labs already run automated multi-turn scanning. A bio-specific, non-provider version of that capability does not yet exist. Because ASTRAL is defined by the log it reads rather than the provider it sits on, each log-holder runs it in their own secure environment and adapts it to their own data. The log-holders are the deployers: AI-scientist platforms, third-party inference providers, and life-science enterprises. So far we have developed and evaluated on synthetic transcripts. We are now seeking a log-holding collaborator. We will adapt ASTRAL to their platform and work with their team to strengthen bio-misuse detection, and in return ASTRAL gets validated and refined in a real deployment.</p>
+    </div>
+  </section>
+
+  <div class="end">
+    <h2>See ASTRAL in action</h2>
+    <div class="acts"><a class="btn solid lg i" href="demo/">Try the demo →</a><a class="btn lg i" href="ASTRAL-project-overview.pdf?v=16b8cfda8584" download>Download the PDF ↓</a></div>
+  </div>
+
+  <section class="sources" id="sources" aria-labelledby="sources-title">
+    <h2 id="sources-title" class="eyebrow i">Sources</h2>
+    <ol>
+      <li id="src-1">Williams, Righetti, Rosenberg, … Tetlock, &quot;Forecasting LLM-Enabled Biorisk and the Efficacy of Safeguards,&quot; FRI / SecureBio / GovAI (2025, rev. Apr 2026).</li>
+      <li id="src-2">Anthropic, &quot;Constitutional Classifiers&quot; (arXiv:2501.18837, 2025); OpenAI, GPT-5 System Card (2025).</li>
+      <li id="src-3">Anthropic, &quot;Detecting and Countering Misuse of AI&quot; (Aug 2025).</li>
+      <li id="src-4">Feldman, Feldman &amp; Antón, &quot;Know Your Scientist: KYC as Biosecurity Infrastructure,&quot; arXiv:2602.06172 (Feb 2026).</li>
+      <li id="src-5">Götting et al., &quot;Virology Capabilities Test (VCT),&quot; arXiv:2504.16137 (2025).</li>
+      <li id="src-6">Shiv Muthupandiyan, &quot;<a href="https://securebio.org/blog/kimi-k3-biology-capabilities-assessment/">Kimi K3 Biology Capabilities Assessment</a>,&quot; SecureBio (August 7, 2026).</li>
+      <li id="src-7">Hassabis, Altman, Amodei, Wang, Suleyman et al., open letter to Congress on nucleic acid synthesis screening, screendna.org (June 2026).</li>
+      <li id="src-8">VET Artificial Intelligence Act, S.2615; AI Risk Evaluation Act, S.2938, 119th Congress.</li>
+      <li id="src-9">Meridian Labs, &quot;Inspect Scout,&quot; github.com/meridianlabs-ai/inspect_scout.</li>
+      <li id="src-10">Marshall et al., &quot;BioTIER: A Refusal Benchmark for Targeted Biological Risk Mitigation,&quot; arXiv:2607.14479 (2026).</li>
+      <li id="src-11">Agrawal et al., &quot;GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning,&quot; ICLR 2026, arXiv:2507.19457.</li>
+      <li id="src-12">Anthropic, &quot;LLM ATT&amp;CK Navigator&quot; (introducing the ARiES actor-risk score), red.anthropic.com (June 2026).</li>
+    </ol>
+  </section>
+
+  <footer class="site-footer">
+    <a class="brand" href="./"><svg class="logo" viewBox="0 0 312 64" role="img" aria-label="ASTRAL"><g transform="translate(1.46,10.17) scale(0.704)"><circle class="logo-apex" cx="32" cy="6" r="3.4"/><g class="logo-dots"><circle cx="27" cy="16" r="3.4"/><circle cx="37" cy="16" r="3.4"/><circle cx="22" cy="26" r="3.4"/><circle cx="42" cy="26" r="3.4"/><circle cx="17" cy="36" r="3.4"/><circle cx="27" cy="36" r="3.4"/><circle cx="37" cy="36" r="3.4"/><circle cx="47" cy="36" r="3.4"/><circle cx="12" cy="46" r="3.4"/><circle cx="52" cy="46" r="3.4"/><circle cx="7" cy="56" r="3.4"/><circle cx="57" cy="56" r="3.4"/></g></g><g class="logo-type"><g transform="translate(58,9)"><path d="M35 6C30 2 25 1 19 1 9 1 3 6 3 13c0 7 5 10 15 12l4 1c7 2 10 4 10 8 0 5-4 7-11 7-7 0-12-3-17-7l-3 5c5 5 12 7 20 7 10 0 17-5 17-12 0-8-5-11-15-14l-5-1c-7-2-9-3-9-7 0-4 4-6 10-6 5 0 10 2 14 5Z" transform="translate(0,2.11) scale(1,.889)"/></g><g transform="translate(111,9)"><path d="M0 3h40v5H23v35h-6V8H0Z"/></g><g transform="translate(164,9)"><path fill-rule="evenodd" d="M3 3h18c11 0 17 5 17 13 0 6-4 11-11 13l13 14h-8L19 29H9v14H3Zm6 5v16h12c7 0 11-3 11-8s-4-8-11-8Z"/></g><g transform="translate(217,9)"><path d="M1 43 18 3h5l17 40h-6L20.5 10 7 43Z M10 29h21v5H10Z"/></g><g transform="translate(270,9)"><path d="M3 3h6v35h28v5H3Z"/></g></g></svg><span class="i" style="font-size:11.5px">Activity Scanner Tool for Risk Assessment of Logs</span></a>
+    <a href="./">← Back to ASTRAL</a>
+  </footer>
+</main>
+</body>
+</html>
