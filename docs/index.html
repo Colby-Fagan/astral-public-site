@@ -11,12 +11,12 @@
 <meta property="og:title" content="ASTRAL — Biological misuse detection for AI chat logs">
 <meta property="og:description" content="ASTRAL scans an organization’s own AI chat logs for biological misuse and ranks conversations for human review. Try the demo or contact ASTRAL@detection.bio.">
 <meta property="og:url" content="https://astral.detection.bio/">
-<meta property="og:image" content="https://astral.detection.bio/assets/social-preview.png?v=64b65c95d713">
+<meta property="og:image" content="https://astral.detection.bio/assets/social-preview.png?v=82f3824914d1">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="ASTRAL: biological misuse detection for AI chat logs, beside a nebula in which the ASTRAL mark forms">
+<meta property="og:image:alt" content="ASTRAL: biological misuse detection for AI chat logs, beside a nebula of blue, violet and teal gas">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://astral.detection.bio/assets/social-preview.png?v=64b65c95d713">
+<meta name="twitter:image" content="https://astral.detection.bio/assets/social-preview.png?v=82f3824914d1">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon.ico" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -149,6 +149,25 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--ice);outline-offset
   .site-footer{flex-direction:column;align-items:flex-start}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.step{transition:none;transform:none}.cue span::after{animation:none}.summary-card,.summary-card .shot img,.member img{transition:none}}
+
+/* Phones: the first screen is the headline over a dim, full-screen nebula; once the
+   introduction scrolls away, the visual glides into a band under the header and the text scrolls below it. */
+@property --cut{syntax:'<length-percentage>';inherits:false;initial-value:100%}
+@media (max-width:900px){
+  .scrolly{grid-template-rows:auto}
+  .pin{grid-area:1/1;position:sticky;top:0;align-self:start;height:100vh;height:100svh;z-index:1;background:none;pointer-events:none}
+  .pin::before{content:"";position:absolute;inset:0 0 auto 0;height:41svh;background:linear-gradient(180deg,#000 88%,transparent);opacity:0;transition:opacity .5s}
+  .pin::after{display:none}
+  .pin canvas{position:relative;opacity:.62;transition:opacity .7s,--cut .8s cubic-bezier(.2,.7,.2,1);
+    -webkit-mask-image:linear-gradient(180deg,#000 calc(var(--cut) - 5svh),transparent var(--cut));mask-image:linear-gradient(180deg,#000 calc(var(--cut) - 5svh),transparent var(--cut))}
+  .scrolly.reading .pin{z-index:3}
+  .scrolly.reading .pin::before{opacity:1}
+  .scrolly.reading .pin canvas{opacity:1;--cut:40svh}
+  .steps{grid-area:1/1;position:relative;z-index:2}
+  .step{min-height:0;padding-block:42svh 8svh}
+  .step.hero{min-height:calc(100svh - 62px);justify-content:flex-end;padding-block:0 4svh;text-shadow:0 0 18px #000,0 0 4px #000}
+  .step.cta{padding-bottom:16svh}
+}
 </style>
 </head>
 <body>
@@ -161,7 +180,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--ice);outline-offset
 <main id="top">
   <div class="scrolly">
     <div class="pin">
-      <canvas role="img" aria-label="Dotted visual that changes as you scroll: a nebula in which the ASTRAL mark forms, a DNA double helix, a wall of chat transcripts, five transcripts flagged while the rest fade, and a list ranked priority 1 to 3."></canvas>
+      <canvas role="img" aria-label="Dotted visual that changes as you scroll: a nebula of blue, violet and teal gas, a DNA double helix, a wall of chat transcripts, five transcripts flagged while the rest fade, and a list ranked priority 1 to 3."></canvas>
     </div>
     <div class="steps">
     <section class="step hero is-active" data-stage="0" aria-label="Introduction">
@@ -243,7 +262,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--ice);outline-offset
   </footer>
   </div>
 </main>
-<script src="scroll-visual.js?v=f06f231cb977"></script>
+<script src="scroll-visual.js?v=9ca27249ee00"></script>
 <script>
 (() => {
   const canvas = document.querySelector('.pin canvas');
@@ -258,7 +277,21 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--ice);outline-offset
     canvas.parentElement.style.setProperty('--safe', Math.round(left) + 'px');
     return { left, right: c.width - gutter };
   };
-  const scene = AstralScroll.create(canvas, { safe });
+  const scrolly = document.querySelector('.scrolly'), header = document.querySelector('.site-header');
+  let reading = false;
+  // Phones: a tall frame behind the introduction, then a band from the header down to 40% of the screen.
+  const vframe = () => {
+    if (!narrow.matches) return null;
+    const top = header.getBoundingClientRect().height, H = canvas.getBoundingClientRect().height;
+    return reading ? { top: top - 4, bottom: H * .4 } : { top, bottom: H * .5 };
+  };
+  const scene = AstralScroll.create(canvas, { safe, vframe });
+  const mode = () => {
+    const r = narrow.matches && steps[0].getBoundingClientRect().bottom < innerHeight * .55;
+    if (r === reading) return;
+    reading = r; scrolly.classList.toggle('reading', r); scene.refit();
+  };
+  addEventListener('scroll', mode, { passive: true }); addEventListener('resize', () => { reading = !reading; mode(); });
   let current = 0;
   const stageOf = k => +steps[k].dataset.stage;
   const set = k => {
@@ -267,9 +300,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--ice);outline-offset
     steps.forEach((s, j) => s.classList.toggle('is-active', j === k));
   };
   const pick = () => {
-    const line = innerHeight * (narrow.matches ? .78 : .55);
     let k = 0;
-    steps.forEach((s, j) => { if (s.getBoundingClientRect().top < line) k = j; });
+    if (narrow.matches) steps.forEach((s, j) => { const h = s.querySelector('h1,h2'); if (h.getBoundingClientRect().top < innerHeight * .8) k = j; });
+    else steps.forEach((s, j) => { if (s.getBoundingClientRect().top < innerHeight * .55) k = j; });
     set(k);
   };
   addEventListener('scroll', pick, { passive: true }); addEventListener('resize', pick); pick();
