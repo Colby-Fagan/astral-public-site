@@ -1,4 +1,4 @@
-/* ASTRAL scroll visual: nebula -> double helix -> transcripts -> flagged -> priority list.
+/* ASTRAL scroll visual: nebula (forming the ASTRAL mark on desktop) -> double helix -> transcripts -> flagged -> priority list.
    Decorative and synthetic: no data, no network requests.
    One 3D particle field seen through a perspective camera. Each stage gives every particle a place;
    moving between stages sends particles along curved paths while the camera glides to a new view. */
@@ -81,16 +81,26 @@
     }
 
     // Nebula: a soft cloud of blue, violet and teal gas around a few young stars, in front of a deep star field.
-    // The gas turns slowly and breathes.
+    // The gas turns slowly and breathes. Where opts.mark() says so (the side-by-side desktop layout), part of the
+    // gas also gathers along the strokes of the ASTRAL mark as the page opens, so a faint "A" forms in the cloud.
+    const MARK_R = 1.2, FORM0 = .35, FORM_T = 2.6;
+    const A_STROKES = [[32, 6, 7, 56], [32, 6, 57, 56], [17, 36, 47, 36]]; // logo units: both sides, then the crossbar
+    const toWorld = (x, y) => [(x - 32) / 26 * MARK_R, (31 - y) / 26 * MARK_R];
+    const APEX = toWorld(32, 6);
+    let withMark = false, C0 = .3, glowFade = 0; // C0: when the forming starts (seconds into the stage)
+    function formAt() { return reduce.matches ? 1 : ease(clamp((st - C0 - FORM0) / FORM_T)); }
     function buildNebula() {
-      const r = rng(7), g = gaussian(r), L = slots(N, ['w', 'ph', 'kind']);
+      withMark = !!(opts.mark && opts.mark());
+      const r = rng(7), g = gaussian(r), L = slots(N, ['w', 'ph', 'kind', 'hx', 'hy', 'hz']);
       let n = 0;
-      const put = (x, y, z, col, size, a, kind) => {
+      // (hx, hy, hz) is where a particle of the mark waits in the cloud before the mark forms
+      const put = (x, y, z, col, size, a, kind, hx = x, hy = y, hz = z) => {
+        L.hx[n] = hx; L.hy[n] = hy; L.hz[n] = hz;
         L.x[n] = x; L.y[n] = y; L.z[n] = z; L.col[n] = col; L.sty[n] = 0; L.size[n] = size; L.a[n] = a; L.kind[n] = kind;
         L.ph[n] = r() * TAU; L.w[n] = (.4 + r() * .8) * (r() < .5 ? -1 : 1);
         L.key[n] = clamp((x + 3.4) / 6.8 + g() * .01); n++;
       };
-      const nGas = Math.round(N * .56), nPuff = Math.round(N * .085), nStar = mobile ? 3 : 4;
+      const nA = withMark ? Math.round(N * .27) : 0, nGas = Math.round(N * (withMark ? .43 : .56)), nPuff = Math.round(N * (withMark ? .075 : .085)), nStar = mobile ? 3 : 4;
       // gas: overlapping clouds of different colours, and two faint filaments
       const blobs = [[0, .05, 0, .95, .8, .45, [BLUE[4], BASE[3], BLUE[3]]], [-.75, -.35, .2, .65, .5, .4, [BASE[1], BASE[1], BLUE[4]]],
         [.75, .3, -.1, .6, .5, .35, [BASE[2], BASE[0], BLUE[4]]], [.1, -.75, .1, .8, .35, .3, [BASE[3], BLUE[4]]], [-.3, .85, -.2, .55, .35, .3, [BASE[1], BLUE[5]]]];
@@ -106,6 +116,22 @@
         const b = blobs[k % blobs.length], x = b[0] + g() * b[3] * .45, y = b[1] + g() * b[4] * .45, z = b[2] + g() * b[5] * .4;
         put(x, y, z, b[6][k % b[6].length], 2.8 + r() * 2.4, .04 + .045 * r(), 0);
       }
+      // the mark: gas condensing along each stroke (kind 3), a bright core with a wider glow, and its stars (kind 4)
+      let apexSlot = -1;
+      if (withMark) {
+        const lens = A_STROKES.map(([x0, y0, x1, y1]) => Math.hypot(x1 - x0, y1 - y0)), total = lens.reduce((a, b) => a + b);
+        for (let k = 0; k < nA; k++) {
+          let pick = r() * total, j = 0; while (pick > lens[j]) pick -= lens[j++];
+          const [x0, y0, x1, y1] = A_STROKES[j], u = r(), [ax, ay] = toWorld(mix(x0, x1, u), mix(y0, y1, u));
+          const len = lens[j], px = (y1 - y0) / len, py = (x1 - x0) / len, halo = r() < .5, sd = halo ? .12 : .045 + .015 * Math.sin(u * 9 + j);
+          const off = g() * sd, x = ax + px * off, y = ay + py * off, z = g() * (halo ? .08 : .04);
+          const col = halo ? [BLUE[4], BLUE[5], BASE[3]][Math.floor(r() * 3)] : [BLUE[6], BLUE[7], BLUE[6], BASE[0], WHITE][Math.floor(r() * 5)];
+          put(x, y, z, col, halo ? .65 + r() * .4 : .5 + r() * .4, halo ? .07 + .08 * r() : .2 + .22 * r(), 3, x + g() * .32, y + g() * .3, z + g() * .25);
+        }
+        const starAt = (x, y, z, col, size, count) => { for (let k = 0; k < count; k++) { const sp = k ? .006 : 0; put(x + g() * sp, y + g() * sp, z + g() * sp, col, size * (.8 + r() * .4), .8, 4, x + g() * .2, y + g() * .2, z); } };
+        apexSlot = n; starAt(APEX[0], APEX[1], .05, BLUE[5], 1.25, 16);
+        [[22, 26], [47, 36], [12, 46]].forEach(([lx, ly]) => { const [x, y] = toWorld(lx, ly); starAt(x, y, g() * .05, WHITE, .8, nStar); });
+      }
       // young stars inside the cloud, one of them ice blue
       for (let k = 0; k < 9; k++) {
         const x = g() * .8, y = g() * .55, z = g() * .3, col = k ? (r() < .75 ? WHITE : WARM[2]) : BLUE[5], size = k ? .75 : 1.1;
@@ -117,19 +143,26 @@
         put(x, y, z, tint < .72 ? BLUE[5 + Math.floor(r() * 4)] : tint < .92 ? WHITE : WARM[2 + Math.floor(r() * 3)], .3 + mag * .7, .1 + .45 * mag, 2);
       }
       finishMap(L);
+      L.inv = new Int32Array(N); for (let i = 0; i < N; i++) L.inv[L.map[i]] = i;
+      L.apex = apexSlot;
       return L;
     }
     function nebulaAt(s, out) {
       const kind = C.kind[s], ph = C.ph[s], w = C.w[s];
       let x = C.x[s], y = C.y[s], z = C.z[s];
       out.col = C.col[s]; out.sty = 0; out.size = C.size[s]; out.a = C.a[s]; out.col2 = -1; out.w2 = 0;
-      if (kind === 0) {                         // gas turns slowly and breathes
+      if (kind === 3 || kind === 4) {           // gathers from the cloud into the mark
+        const k = clamp(formAt() * 1.15 - (ph / TAU) * .15);
+        x = mix(C.hx[s], x, k); y = mix(C.hy[s], y, k); z = mix(C.hz[s], z, k);
+        if (kind === 3) { out.a *= mix(.45, 1, k); x += Math.sin(clock * .5 + ph) * .006; y += Math.cos(clock * .43 + ph) * .006; }
+        else { out.a *= mix(.1, 1, k); out.size *= mix(.5, 1, k) * (1 + .08 * Math.sin(clock * 1.7 + ph)); }
+      } else if (kind === 0) {                  // gas turns slowly and breathes
         const an = clock * .02 * w, c = Math.cos(an), sn = Math.sin(an);
         const x0 = x; x = x0 * c - z * sn; z = x0 * sn + z * c; y += Math.sin(clock * .21 + ph) * .02;
         out.a *= .8 + .2 * Math.sin(clock * .3 + ph);
       } else if (kind === 1) {                  // young stars shimmer
         out.a *= .75 + .25 * Math.sin(clock * 1.1 + ph); out.size *= 1 + .08 * Math.sin(clock * 1.7 + ph);
-      } else {                                  // background stars twinkle
+      } else if (kind === 2) {                  // background stars twinkle
         out.a *= .72 + .28 * Math.sin(clock * (.4 + Math.abs(w)) + ph);
       }
       out.x = x; out.y = y; out.z = z;
@@ -363,6 +396,7 @@
       const S0 = STAGES[k];
       TR = k === 3 && prevStage === 4 ? 1.6 : S0.tr; ARC = S0.arc;
       if (instant) TR = 0;
+      C0 = instant ? .3 : 1.75;
       setDelays();
     }
 
@@ -429,6 +463,8 @@
       }
       ctx.globalAlpha = 1;
       if (cardStage && nCards) overlays();
+      glowFade = withMark && stage === 0 ? 1 : glowFade * Math.exp(-dt * 6);
+      if (glowFade > .01 && C.apex >= 0) apexGlow();
       ctx.globalCompositeOperation = 'source-over';
     }
     function dot(sty, col, x, y, rad, alpha) {
@@ -510,6 +546,17 @@
       }
     }
 
+    // A soft ice-blue glow on the mark's apex star, growing as the mark forms; it follows the star when it flies off.
+    function apexGlow() {
+      const i = C.inv[C.apex];
+      project(X[i], Y[i], Z[i], pj); if (!pj.v) return;
+      const f = stage === 0 ? formAt() : 1, br = (.85 + .15 * Math.sin(clock * 1.2)) * f * glowFade, rad = F * .14;
+      const gl = ctx.createRadialGradient(pj.x, pj.y, 0, pj.x, pj.y, rad);
+      gl.addColorStop(0, `rgba(124,200,236,${.26 * br})`); gl.addColorStop(.3, `rgba(124,200,236,${.07 * br})`); gl.addColorStop(1, 'rgba(124,200,236,0)');
+      ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 1; ctx.fillStyle = gl; ctx.fillRect(pj.x - rad, pj.y - rad, rad * 2, rad * 2);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
     /* ---------- loop and lifecycle ---------- */
     function tick(now) {
       raf = 0;
@@ -518,7 +565,7 @@
       schedule();
     }
     function schedule() { if (!raf && visible && !document.hidden && !reduce.matches && N) raf = requestAnimationFrame(tick); }
-    function still() { st = stage === 3 ? 4.5 : stage === 4 ? 3 : 0; TR = 0; frame(0, true); }
+    function still() { st = stage === 3 ? 4.5 : stage === 4 ? 3 : stage === 0 ? C0 + FORM0 + FORM_T + 1 : 0; TR = 0; frame(0, true); }
 
     // Phones can ask for the scene to sit in a band of the canvas (opts.vframe() gives its top and bottom);
     // refit() glides it there, so the visual can shrink from a full-screen backdrop to a strip above the text.

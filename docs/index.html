@@ -262,7 +262,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--ice);outline-offset
   </footer>
   </div>
 </main>
-<script src="scroll-visual.js?v=9ca27249ee00"></script>
+<script src="scroll-visual.js?v=c4cf6b377b8b"></script>
 <script>
 (() => {
   const canvas = document.querySelector('.pin canvas');
@@ -285,7 +285,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--ice);outline-offset
     const top = header.getBoundingClientRect().height, H = canvas.getBoundingClientRect().height;
     return reading ? { top: top - 4, bottom: H * .4 } : { top, bottom: H * .5 };
   };
-  const scene = AstralScroll.create(canvas, { safe, vframe });
+  // The faint "A" forms in the opening nebula only in the side-by-side desktop layout.
+  const scene = AstralScroll.create(canvas, { safe, vframe, mark: () => !narrow.matches });
   const mode = () => {
     const r = narrow.matches && steps[0].getBoundingClientRect().bottom < innerHeight * .55;
     if (r === reading) return;
