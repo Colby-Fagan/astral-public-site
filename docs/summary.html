@@ -120,10 +120,33 @@ strong{color:#fff;font-weight:500}
   .site-footer{flex-direction:column;align-items:flex-start}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* the hackathon: an amber call to action beside the demo */
+.btn.event{border-color:var(--amber);background:rgba(244,184,86,.08)}
+.btn.event:hover{background:rgba(244,184,86,.2)}
+.btn.event.solid{background:var(--amber);border-color:var(--amber);color:#000}
+.btn.event.solid:hover{background:#ffd08a;border-color:#ffd08a}
+@media (max-width:900px){.site-header nav.right{gap:8px;padding:0 12px}.site-header nav.right .btn{padding:7px 10px;font-size:12.5px}.brand .logo{width:112px}.brand{padding:14px 12px 14px 16px}}
+
+/* event banner: the first thing on the page. Fixed above the fixed header on wide screens; at the top of the page on phones. */
+.event-banner{position:fixed;inset:0 0 auto 0;z-index:21;min-height:54px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 18px;padding:8px var(--gutter);
+  background:linear-gradient(90deg,#f4b856,#ffd59a 50%,#f4b856);color:#000;font-size:15.5px;line-height:1.35;text-decoration:none;text-shadow:none}
+.event-banner b{font-weight:600}
+.event-banner .when{color:#2a1c05}
+.event-banner .go{font-family:var(--mono);font-style:italic;font-size:14px;letter-spacing:-.02em;padding:7px 14px;background:#000;color:#f4b856;white-space:nowrap;transition:background .2s,color .2s}
+.event-banner:hover .go{background:#1a1205;color:#ffd59a}
+.event-banner:focus-visible{outline:2px solid #fff;outline-offset:-4px}
+.event-banner .dot{flex:none;width:8px;height:8px;border-radius:50%;background:#000;box-shadow:0 0 0 0 rgba(0,0,0,.5);animation:ev-pulse 2s ease-out infinite}
+@keyframes ev-pulse{to{box-shadow:0 0 0 8px rgba(0,0,0,0)}}
+@media (prefers-reduced-motion:reduce){.event-banner .dot{animation:none}}
+@media (max-width:1180px){.event-banner .more{display:none}}
+.event-banner{position:relative}
+@media (max-width:900px){.event-banner{justify-content:flex-start;padding:10px 16px;font-size:13.5px}.event-banner .when{flex-basis:100%;order:3}.event-banner .go{margin-left:auto}}
 </style>
 </head>
 <body>
 <a class="skip-link" href="#title">Skip to content</a>
+<a class="event-banner" href="https://luma.com/0iufmn6q"><span class="dot" aria-hidden="true"></span><span class="what"><b>CBAI Boston Biosecurity Hackathon</b><span class="more"> with the ASTRAL team</span></span><span class="when">Sun 15 Nov · Harvard Square, Cambridge<span class="more"> · Free · No coding required · $5,000 in prizes</span></span><span class="go">Apply →</span></a>
 <header class="site-header">
   <a class="brand" href="./" aria-label="ASTRAL home"><svg class="logo" viewBox="0 0 312 64" role="img" aria-label="ASTRAL"><g transform="translate(1.46,10.17) scale(0.704)"><circle class="logo-apex" cx="32" cy="6" r="3.4"/><g class="logo-dots"><circle cx="27" cy="16" r="3.4"/><circle cx="37" cy="16" r="3.4"/><circle cx="22" cy="26" r="3.4"/><circle cx="42" cy="26" r="3.4"/><circle cx="17" cy="36" r="3.4"/><circle cx="27" cy="36" r="3.4"/><circle cx="37" cy="36" r="3.4"/><circle cx="47" cy="36" r="3.4"/><circle cx="12" cy="46" r="3.4"/><circle cx="52" cy="46" r="3.4"/><circle cx="7" cy="56" r="3.4"/><circle cx="57" cy="56" r="3.4"/></g></g><g class="logo-type"><g transform="translate(58,9)"><path d="M35 6C30 2 25 1 19 1 9 1 3 6 3 13c0 7 5 10 15 12l4 1c7 2 10 4 10 8 0 5-4 7-11 7-7 0-12-3-17-7l-3 5c5 5 12 7 20 7 10 0 17-5 17-12 0-8-5-11-15-14l-5-1c-7-2-9-3-9-7 0-4 4-6 10-6 5 0 10 2 14 5Z" transform="translate(0,2.11) scale(1,.889)"/></g><g transform="translate(111,9)"><path d="M0 3h40v5H23v35h-6V8H0Z"/></g><g transform="translate(164,9)"><path fill-rule="evenodd" d="M3 3h18c11 0 17 5 17 13 0 6-4 11-11 13l13 14h-8L19 29H9v14H3Zm6 5v16h12c7 0 11-3 11-8s-4-8-11-8Z"/></g><g transform="translate(217,9)"><path d="M1 43 18 3h5l17 40h-6L20.5 10 7 43Z M10 29h21v5H10Z"/></g><g transform="translate(270,9)"><path d="M3 3h6v35h28v5H3Z"/></g></g></svg></a>
   <nav class="i"><a href="./">Overview</a><a href="summary.html" aria-current="page">Summary</a><a href="./#team">Team</a></nav>
@@ -218,7 +241,7 @@ strong{color:#fff;font-weight:500}
 
   <div class="end">
     <h2>See ASTRAL in action</h2>
-    <div class="acts"><a class="btn solid lg i" href="demo/">Try the demo →</a><a class="btn lg i" href="ASTRAL-project-overview.pdf?v=16b8cfda8584" download>Download the PDF ↓</a></div>
+    <div class="acts"><a class="btn solid lg i" href="demo/">Try the demo →</a><a class="btn event solid lg i" href="https://luma.com/0iufmn6q">Apply for the hackathon →</a><a class="btn lg i" href="ASTRAL-project-overview.pdf?v=16b8cfda8584" download>Download the PDF ↓</a></div>
   </div>
 
   <section class="sources" id="sources" aria-labelledby="sources-title">
